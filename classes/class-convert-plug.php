@@ -66,7 +66,7 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 			// add_filter( 'custom_menu_order', array( $this, 'cp_submenu_order' ) );
 			
 			// add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_scripts' ), 10 );
-			// add_action( 'admin_print_scripts', array( $this, 'cp_admin_css' ) );
+			$this->helper->add_action( 'admin_print_scripts', array( $this, 'cp_admin_css' ) );
 			$this->helper->add_action( 'admin_enqueue_scripts', array( $this, 'cp_admin_scripts' ), 100 );
 			// add_filter( 'bsf_core_style_screens', array( $this, 'cp_add_core_styles' ) );
 			// add_action( 'admin_head', array( $this, 'cp_custom_css' ) );
@@ -346,6 +346,7 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 			$hook = Context::getContext()->controller->controller_name;
 			$admin_conv = 'AdminConv';
 			// Store all global CSS variables.
+			Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'framework/assets/js/css-generator.js');
 			// wp_enqueue_script( 'convert-plus-css-generator', CP_PLUGIN_URL . 'framework/assets/js/css-generator.js', array( 'jquery' ), CP_VERSION, false );
 
 			// wp_enqueue_script( 'wp-color-picker' );
@@ -500,7 +501,8 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 		 * @since 1.0
 		 */
 		public function cp_admin_css() {
-			wp_enqueue_style( 'convert-plus-admin-css', CP_PLUGIN_URL . 'admin/assets/css/font.css', array(), CP_VERSION );
+			Context::getContext()->controller->addCSS(CP_PLUGIN_URL . 'admin/assets/css/font.css');
+			// wp_enqueue_style( 'convert-plus-admin-css', CP_PLUGIN_URL . 'admin/assets/css/font.css', array(), CP_VERSION );
 		}
 
 		/**

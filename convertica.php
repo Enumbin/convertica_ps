@@ -284,6 +284,7 @@ class Convertica extends Module
     {
         $this->context->controller->addJS($this->_path.'views/js/back.js');
         $this->context->controller->addCSS($this->_path.'views/css/back.css');
+        $this->helper_instance->do_action('admin_print_scripts');
         $this->helper_instance->do_action('admin_enqueue_scripts');
     }
 
