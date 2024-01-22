@@ -354,9 +354,10 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 
 			// $data = $this->helper->get_option( 'convert_plug_debug' );
 
-			// if ( false !== strpos( $hook, CP_PLUS_SLUG ) ) {
-			// 	wp_enqueue_style( 'convert-plus-connects-icon', CP_PLUGIN_URL . 'modules/assets/css/connects-icon.css', array(), CP_VERSION );
-			// }
+			if ( false !== strpos( $hook, $admin_conv ) ) {
+				Context::getContext()->controller->addCSS(CP_PLUGIN_URL . 'modules/assets/css/connects-icon.css');
+				// wp_enqueue_style( 'convert-plus-connects-icon', CP_PLUGIN_URL . 'modules/assets/css/connects-icon.css', array(), CP_VERSION );
+			}
 
 			// if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && ! wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
 			// 	wp_die( 'No direct script access allowed!' );
@@ -483,6 +484,7 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 					// wp_enqueue_style( 'convert-plus-contacts', CP_PLUGIN_URL . 'admin/contacts/css/cp-contacts.css', array(), CP_VERSION );
 					// wp_enqueue_style( 'convert-plus-swal-style', CP_PLUGIN_URL . 'admin/assets/css/sweetalert.css', array(), CP_VERSION );
 				} else {
+					
 					Context::getContext()->controller->addCSS(CP_PLUGIN_URL . 'admin/assets/css/admin.min.css');
 					// wp_enqueue_style( 'convert-plus-admin-css', CP_PLUGIN_URL . 'admin/assets/css/admin.min.css', array(), CP_VERSION );
 				}

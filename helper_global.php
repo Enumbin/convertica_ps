@@ -180,6 +180,15 @@ class Helper_Global{
 		return Context::getContext()->getTranslator()->trans( $text, [], 'Modules.Convertica.Admin' );
 	}
 
+	public function esc_html($text){
+		return $text;
+	}
+
+	public function esc_url($url){
+		return $url;
+	}
+
+
 	public static function get_instance() {
 		if (self::$instance == null) {
 			self::$instance = new Helper_Global();

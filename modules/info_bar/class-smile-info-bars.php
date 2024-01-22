@@ -18,21 +18,6 @@ if ( ! class_exists( 'Convert_Plug_Smile_Info_Bars' ) ) {
 	 */
 	class Convert_Plug_Smile_Info_Bars extends Convert_Plug {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		/**
 		 * $settings array.
 		 *

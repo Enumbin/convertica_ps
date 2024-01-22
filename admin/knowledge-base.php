@@ -9,7 +9,7 @@ defined( '_PS_VERSION_' ) || die( 'No direct script access allowed!' );
 $helper_instance = Helper_Global::get_instance();
 ?>
 <div id="main">
-    <div id="content" class="bootstrap ">
+    <div id="content"   class="bootstrap ">
 		<div class="wrap about-wrap about-cp bend">
 			<div class="wrap-container">
 				<div class="bend-heading-section cp-about-header">

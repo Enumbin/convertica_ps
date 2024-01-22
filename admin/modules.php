@@ -18,7 +18,7 @@ if ( true !== $reg_menu_hide ) {
 }
 ?>
 <div id="main">
-    <div id="content" class="bootstrap ">
+    <div id="content"  class="bootstrap">
 	<div class="wrap about-wrap about-cp bend">
 		<div class="wrap-container">
 			<div class="bend-heading-section cp-about-header">

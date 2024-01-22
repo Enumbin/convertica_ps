@@ -18,7 +18,7 @@ if ( true !== $reg_menu_hide ) {
 }
 ?>
 <div id="main">
-    <div id="content" class="bootstrap ">
+    <div id="content"  class="bootstrap ">
 		<div class="wrap about-wrap about-cp bend">
 			<div class="wrap-container">
 				<div class="bend-heading-section cp-about-header">
@@ -174,14 +174,13 @@ if ( true !== $reg_menu_hide ) {
 							<?php
 
 							$stored_modules = $helper_instance->convertica_get_option( 'convert_plug_modules' );
-
-							$get_started_url = "";
+							$get_started_url = Context::getContext()->link->getAdminLink('AdminConvDashboard');
 							if ( 'Modal_Popup' === $stored_modules[0] ) {
-								$get_started_url .= 'admin.php?page=smile-modal-designer&style-view=new';
+								$get_started_url .= '&page=smile-modal-designer&style-view=new';
 							} elseif ( 'Slide_In_Popup' === $stored_modules[0] ) {
-								$get_started_url .= 'admin.php?page=smile-slide_in-designer&style-view=new';
+								$get_started_url .= '&page=smile-slide_in-designer&style-view=new';
 							} else {
-								$get_started_url .= 'admin.php?page=smile-info_bar-designer&style-view=new';
+								$get_started_url .= '&page=smile-info_bar-designer&style-view=new';
 							}
 							?>
 							<a class="button-primary cp-started-footer-button" href="<?php echo $get_started_url; ?>"><?php echo $helper_instance->esc_html__( "LET'S GET STARTED", 'smile' ); ?></a>

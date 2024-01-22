@@ -134,6 +134,10 @@ class Convertica extends Module
             $this->helper_instance->convertica_update_option( 'cp_is_new_user', false );
         }
 
+        $this->create_default_campaign();
+
+
+
         // save previous version of plugin in option.
         $this->helper_instance->convertica_update_option( 'cp_previous_version', CP_VERSION );
 
@@ -142,6 +146,61 @@ class Convertica extends Module
         return parent::install() &&
             $this->registerHook('header') &&
             $this->registerHook('displayBackOfficeHeader');
+    }
+
+    public function create_default_campaign() {
+        // create default campaign.
+        $smile_lists = $this->helper_instance->convertica_get_option( 'smile_lists' );
+        if ( ! $smile_lists ) {
+            $data = array();
+            $list = array(
+                'date'          => gmdate( 'd-m-Y' ),
+                'list-name'     => 'First',
+                'list-provider' => 'Convert Plug',
+                'list'          => '',
+                'provider_list' => '',
+            );
+
+            $data[] = $list;
+            $this->helper_instance->convertica_update_option( 'smile_lists', $data );
+
+        }
+
+        $data_settings = $this->helper_instance->convertica_get_option(  'convert_plug_settings' );
+        if ( ! $data_settings ) {
+            $module_setings = array(
+                'cp-enable-mx-record'   => '0',
+                'cp-default-messages'   => '1',
+                'cp-already-subscribed' => 'Already Subscribed...!',
+                'cp-double-optin'       => '1',
+                'cp-gdpr-optin'         => '1',
+                'cp-sub-notify'         => '0',
+                'cp-sub-email'          => Configuration::get('PS_SHOP_EMAIL'),
+                'cp-email-sub'          => 'Congratulations! You have a New Subscriber!',
+                'cp-google-fonts'       => '1',
+                'cp-timezone'           => 'wordpress',
+                'user_inactivity'       => '60',
+                'cp-edit-style-link'    => '0',
+                'cp-plugin-support'     => '0',
+                'cp-disable-impression' => '0',
+                'cp-close-inline'       => '0',
+                'cp-disable-storage'    => '0',
+                'cp-disable-pot'        => '1',
+                'cp-disable-domain'     => '0',
+                'cp-domain-name'        => '',
+                'cp-lazy-img'           => '0',
+                'cp-close-gravity'      => '1',
+                'cp-load-syn'           => '0',
+                'cp_change_ntf_id'      => '1',
+                'cp_notify_email_to'    => Configuration::get('PS_SHOP_EMAIL'),
+                'cp-access-role'        => '',
+                'cp-user-role'          => 'administrator',
+                'cp-new-user-role'      => '',
+                'cp-email-body'         => '',
+            );
+            $this->helper_instance->convertica_update_option( 'convert_plug_settings', $module_setings );
+        }
+
     }
 
     public function uninstall()
