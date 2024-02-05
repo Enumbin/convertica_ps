@@ -12,7 +12,7 @@ if ( function_exists( 'smile_framework_add_options' ) ) {
 		array(
 			'style_name'    => 'Newsletter',
 			'demo_url'      => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/newsletter/newsletter.html',
-			'demo_dir'      => plugin_dir_path( __FILE__ ) . '../../assets/demos/newsletter/newsletter.html',
+			'demo_dir'      => CP_BASE_DIR_IFB . 'functions/config/' . '../../assets/demos/newsletter/newsletter.html',
 			'img_url'       => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/newsletter/newsletter.png',
 			'customizer_js' => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/newsletter/customizer.js',
 			'category'      => 'All,Optins',

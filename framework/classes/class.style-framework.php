@@ -16,7 +16,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 	 * @param string $module      string parameter.
 	 */
 	function smile_style_dashboard( $class, $option_name, $module ) {
-		if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
+		if ( isset( $_REQUEST['token'] ) ) {
+			$helper_instance = Helper_Global::get_instance();
 			$html          = '';
 			$settings      = $class::$options;
 			$all_settings  = $settings;
@@ -27,8 +28,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 			$style_content = array();
 			$all_styles    = array();
 			$url_data      = $_GET;
-			$ge_theme      = isset( $url_data['theme'] ) ? esc_attr( $url_data['theme'] ) : '';
-			$style_view    = isset( $url_data['style-view'] ) ? esc_attr( $url_data['style-view'] ) : '';
+			$ge_theme      = isset( $url_data['theme'] ) ? $url_data['theme'] : '';
+			$style_view    = isset( $url_data['style-view'] ) ? $url_data['style-view'] : '';
 
 			$category_data = array();
 			foreach ( $all_settings as $style => $options ) {
@@ -43,7 +44,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 				$all_styles[ $options['style_name'] ] = $all_opts;
 			}
 
-			$preset_templates = get_option( 'cp_' . $module . '_preset_templates' );
+			$preset_templates = $helper_instance->convertica_get_option( 'cp_' . $module . '_preset_templates' );
+			$preset_templates = json_decode($preset_templates, true);
 
 			if ( is_array( $preset_templates ) ) {
 				$all_styles = array_merge( $all_styles, $preset_templates );
@@ -63,8 +65,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 					$new_sections = array();
 					$opts[]       = $style;
 					$opts[]       = $options['style_name'];
-					$opts[]       = esc_url( $options['demo_url'] );
-					$opts[]       = esc_url( $options['img_url'] );
+					$opts[]       = $options['demo_url'];
+					$opts[]       = $options['img_url'];
 					$opts[]       = $options['customizer_js'];
 
 					if ( ! isset( $options['category'] ) || null === $options['category'] ) {
@@ -156,15 +158,16 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 							break;
 
 					}
-					echo '<li class="smile-filter-li" data-group="' . esc_attr( $cat ) . '">
-				<i class="' . esc_attr( $icon ) . '"></i>
-				<a class="smile-filter-anchor">' . esc_html( ucfirst( $cat ) ) . '</a></li>';
+					echo '<li class="smile-filter-li" data-group="' . ( $cat ) . '">
+				<i class="' . ( $icon ) . '"></i>
+				<a class="smile-filter-anchor">' . $helper_instance->esc_html( ucfirst( $cat ) ) . '</a></li>';
 				}
 				echo '</ul>';
 				echo '<ul class="cp-styles-list row" id="grid">';
 			}
 
-			$existing_presets = get_option( 'cp_' . $module . '_preset_templates' );
+			$existing_presets = $helper_instance->convertica_get_option( 'cp_' . $module . '_preset_templates' );
+			$existing_presets = json_decode($existing_presets, true);
 			$fun              = 'cp_add_' . $module . '_template';
 			$preset_list      = $fun( array(), '', $module );
 
@@ -184,13 +187,14 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 				$old_style           = '';
 				$data_action         = isset( $_GET['variant-test'] ) ? 'update_variant_test_settings' : 'update_style_settings';
 				$data_option         = isset( $_GET['variant-test'] ) ? $module . '_variant_tests' : $option_name;
-				$smile_variant_tests = get_option( $data_option );
-				$variant_style       = isset( $_GET['variant-style'] ) ? sanitize_text_field( $_GET['variant-style'] ) : '';
-				$variant_test        = isset( $_GET['variant-test'] ) ? sanitize_text_field( $_GET['variant-test'] ) : '';
-				$style_id            = isset( $_GET['style_id'] ) ? sanitize_text_field( $_GET['style_id'] ) : '';
+				$smile_variant_tests = $helper_instance->convertica_get_option( $data_option );
+				$smile_variant_tests = json_decode($smile_variant_tests, true);
+				$variant_style       = isset( $_GET['variant-style'] ) ? ( $_GET['variant-style'] ) : '';
+				$variant_test        = isset( $_GET['variant-test'] ) ? ( $_GET['variant-test'] ) : '';
+				$style_id            = isset( $_GET['style_id'] ) ? ( $_GET['style_id'] ) : '';
 				$smile_variant_tests = isset( $smile_variant_tests[ $style_id ] ) ? $smile_variant_tests[ $style_id ] : '';
-				$style_name          = isset( $_GET['style'] ) ? sanitize_text_field( $_GET['style'] ) : '';
-				$page                = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+				$style_name          = isset( $_GET['style'] ) ? ( $_GET['style'] ) : '';
+				$page                = isset( $_GET['page'] ) ? ( $_GET['page'] ) : '';
 
 				$option = '';
 				if ( 'smile-info_bar-designer' === $page ) {
@@ -204,7 +208,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 				if ( isset( $_GET['variant-style'] ) ) {
 					if ( is_array( $smile_variant_tests ) && ! empty( $smile_variant_tests ) ) {
 						if ( isset( $_GET['action'] ) && 'new' === $_GET['action'] ) {
-							$prev_styles            = get_option( $option );
+							$prev_styles            = $helper_instance->convertica_get_option( $option );
+							$prev_styles            = json_decode($prev_styles, true);
 							$key                    = search_style( $prev_styles, $style_id );
 							$style_settings         = $prev_styles[ $key ];
 							$style_settings         = maybe_unserialize( $style_settings['style_settings'] );
@@ -221,7 +226,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 							}
 						}
 					} elseif ( isset( $_GET['action'] ) && 'new' === $_GET['action'] ) {
-						$prev_styles            = get_option( $option );
+						$prev_styles            = $helper_instance->convertica_get_option( $option );
+						$prev_styles            = json_decode($prev_styles, true);
 						$key                    = search_style( $prev_styles, $style_id );
 						$style_settings         = $prev_styles[ $key ];
 						$style_settings         = maybe_unserialize( $style_settings['style_settings'] );
@@ -229,8 +235,9 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 						$old_style              = $style_settings['style'];
 					}
 				} elseif ( isset( $_GET['style'] ) ) {
-					$style_id    = sanitize_text_field( $_GET['style'] );
-					$prev_styles = get_option( $data_option );
+					$style_id    = ( $_GET['style'] );
+					$prev_styles = $helper_instance->convertica_get_option( $data_option );
+					$prev_styles = json_decode($prev_styles);
 					$key         = search_style( $prev_styles, $style_id );
 					$style_name  = '';
 					if ( null !== $key ) {
@@ -241,7 +248,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 					}
 				}
 				if ( isset( $_GET['theme'] ) ) {
-					$theme                = sanitize_text_field( $_GET['theme'] );
+					$theme                = ( $_GET['theme'] );
 					$edit_style[ $theme ] = $styles[ $theme ];
 					$styles               = $edit_style;
 				}
@@ -261,16 +268,17 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 					$styles = array_merge( $styles, $preset_list );
 				} else {
 					if ( ! isset( $_GET['variant-style'] ) ) {
-						$prev_styles = get_option( $data_option );
-						$key         = search_style( $prev_styles, esc_attr( $_GET['style'] ) );
+						$prev_styles = $helper_instance->convertica_get_option( $data_option );
+						$prev_styles = json_decode($prev_styles, true);
+						$key         = search_style( $prev_styles, ( $_GET['style'] ) );
 
 						if ( null === $key ) {
 
 							// if current style is preset.
 							if ( isset( $_GET['preset'] ) ) {
-								$preset = sanitize_text_field( $_GET['preset'] );
+								$preset = ( $_GET['preset'] );
 
-								$settings = get_option( 'cp_' . $module . '_' . $preset, '' );
+								$settings = $helper_instance->convertica_get_option( 'cp_' . $module . '_' . $preset, '' );
 
 								if ( '' === $settings ) {
 									$demo_dir = CP_BASE_DIR . 'modules/' . $module . '/presets/' . $preset . '.txt';
@@ -314,7 +322,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 					$cp_connected = false;
 				}
 
-				$cp_screenshots_images = get_option( 'cp_screenshots_images', array() );
+				$cp_screenshots_images = $helper_instance->convertica_get_option( 'cp_screenshots_images', array() );
 
 				foreach ( $styles as $style => $options ) {
 					foreach ( $cp_screenshots_images as $image => $slug ) {
@@ -322,7 +330,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 							$options[3] = $image;
 						}
 					}
-					$rand               = substr( md5( uniqid() ), wp_rand( 0, 26 ), 5 );
+					$rand               = substr( md5( uniqid() ), $helper_instance->wp_rand( 0, 26 ), 5 );
 					$dynamic_style_name = 'cp_id_' . $rand;
 					$new_style_id       = ( isset( $style_id ) && '' !== $style_id ) ? $style_id : $dynamic_style_name;
 					if ( isset( $_GET['variant-test'] ) && 'new' === $_GET['variant-test'] ) {
@@ -330,66 +338,89 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 					}
 					$active = ( $old_style == $options[0] ) ? 'active ' : '';
 
-					$page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+					$page = isset( $_GET['page'] ) ? ( $_GET['page'] ) : '';
 
 					$callback_url   = 'admin.php?page=' . $page;
 					$hide_new_style = '';
 
 					if ( isset( $style_view ) && 'variant' !== $style_view ) {
 						$preset = ( isset( $options[7] ) ) ? '&preset=' . $options[7] : '';
-
-						$url = add_query_arg(
-							array(
-								'page'       => $page,
-								'style-view' => 'edit',
-								'action'     => 'new',
-								'style'      => $dynamic_style_name,
-								'theme'      => $options[0] . $preset,
-							),
-							admin_url( 'admin.php' )
-						);
-
-						$callback_url = add_query_arg(
-							array(
-								'page' => $page,
-							),
-							admin_url( 'admin.php' )
-						);
+						$url = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], array(
+							'page'       => $page,
+							'style-view' => 'edit',
+							'action'     => 'new',
+							'style'      => $dynamic_style_name,
+							'theme'      => $options[0] . $preset,
+						));
+						// $url = add_query_arg(
+						// 	array(
+						// 		'page'       => $page,
+						// 		'style-view' => 'edit',
+						// 		'action'     => 'new',
+						// 		'style'      => $dynamic_style_name,
+						// 		'theme'      => $options[0] . $preset,
+						// 	),
+						// 	admin_url( 'admin.php' )
+						// );
+						$callback_url = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], array(
+							'page' => $page,
+						));
+						// $callback_url = add_query_arg(
+						// 	array(
+						// 		'page' => $page,
+						// 	),
+						// 	admin_url( 'admin.php' )
+						// );
 					} else {
-						$sid = isset( $_GET['style_id'] ) ? sanitize_text_field( $_GET['style_id'] ) : sanitize_text_field( $_GET['variant-style'] );
+						$sid = isset( $_GET['style_id'] ) ? ( $_GET['style_id'] ) : ( $_GET['variant-style'] );
 
-						$pid = isset( $_GET['parent-style'] ) ? sanitize_text_field( $_GET['parent-style'] ) : sanitize_text_field( $_GET['style_id'] );
-
-						$callback_url = add_query_arg(
-							array(
-								'page'          => $page,
-								'style-view'    => 'variant',
-								'variant-style' => $sid,
-								'style'         => stripslashes( $pid ),
-								'theme'         => $theme,
-							),
-							admin_url( 'admin.php' )
-						);
-
-						$url = add_query_arg(
-							array(
-								'page'          => $page,
-								'style-view'    => 'variant',
-								'variant-test'  => 'edit',
-								'action'        => 'new',
-								'variant-style' => $dynamic_style_name,
-								'style'         => rawurlencode( stripslashes( $style_name ) ),
-								'style_id'      => $variant_style,
-								'theme'         => $options[0],
-							),
-							admin_url( 'admin.php' )
-						);
+						$pid = isset( $_GET['parent-style'] ) ? ( $_GET['parent-style'] ) : ( $_GET['style_id'] );
+						$callback_url = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], array(
+							'page'          => $page,
+							'style-view'    => 'variant',
+							'variant-style' => $sid,
+							'style'         => stripslashes( $pid ),
+							'theme'         => $theme,
+						));
+						// $callback_url = add_query_arg(
+						// 	array(
+						// 		'page'          => $page,
+						// 		'style-view'    => 'variant',
+						// 		'variant-style' => $sid,
+						// 		'style'         => stripslashes( $pid ),
+						// 		'theme'         => $theme,
+						// 	),
+						// 	admin_url( 'admin.php' )
+						// );
+						$url = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], array(
+							'page'          => $page,
+							'style-view'    => 'variant',
+							'variant-test'  => 'edit',
+							'action'        => 'new',
+							'variant-style' => $dynamic_style_name,
+							'style'         => rawurlencode( stripslashes( $style_name ) ),
+							'style_id'      => $variant_style,
+							'theme'         => $options[0],
+						));
+						// $url = add_query_arg(
+						// 	array(
+						// 		'page'          => $page,
+						// 		'style-view'    => 'variant',
+						// 		'variant-test'  => 'edit',
+						// 		'action'        => 'new',
+						// 		'variant-style' => $dynamic_style_name,
+						// 		'style'         => rawurlencode( stripslashes( $style_name ) ),
+						// 		'style_id'      => $variant_style,
+						// 		'theme'         => $options[0],
+						// 	),
+						// 	admin_url( 'admin.php' )
+						// );
 
 						$hide_new_style = 'cp-hidden-variant-style';
 					}
 
 					if ( ! isset( $style_name ) ) {
-						$sanitize_style_name = isset( $_GET['style-name'] ) ? stripslashes( ucwords( sanitize_text_field( $_GET['style-name'] ) ) ) : '';
+						$sanitize_style_name = isset( $_GET['style-name'] ) ? stripslashes( ucwords( ( $_GET['style-name'] ) ) ) : '';
 						$style_name          = $sanitize_style_name;
 					}
 
@@ -401,7 +432,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 
 					// check if this style is importable.
 					if ( isset( $options[7] ) ) {
-						$preset_option_data = get_option( 'cp_' . $module . '_' . $options[7] );
+						$preset_option_data = $helper_instance->convertica_get_option( 'cp_' . $module . '_' . $options[7] );
+						$preset_option_data = json_decode($preset_option_data, true);
 
 						if ( is_array( $preset_option_data ) && ! empty( $preset_option_data ) ) {
 							$is_importable = false;
@@ -418,7 +450,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 						} else {
 							$el_class = '';
 						}
-						echo '<a id="' . esc_attr( $style ) . '" class="cp-style-split-link button button-primary customize' . esc_attr( $el_class ) . '" href="' . esc_attr( esc_url( $url ) ) . '" ' . wp_kses_post( $data_view ) . ' data-module="' . esc_attr( ucwords( str_replace( '_', ' ', $module ) ) ) . '" data-id="' . esc_attr( $style ) . '" data-style="panel-' . esc_attr( $options[0] ) . '">' . esc_html__( 'Start Customizing', 'smile' ) . '</a>';
+						echo '<a id="' . ( $style ) . '" class="cp-style-split-link button button-primary customize' . ( $el_class ) . '" href="' . ( ( $url ) ) . '" ' . ( $data_view ) . ' data-module="' . ( ucwords( str_replace( '_', ' ', $module ) ) ) . '" data-id="' . ( $style ) . '" data-style="panel-' . ( $options[0] ) . '">' . $helper_instance->esc_html__( 'Start Customizing', 'smile' ) . '</a>';
 					} else {
 						if ( isset( $_GET['style-view'] ) && 'edit' !== $style_view ) {
 							$options[5] = explode( ',', $options[5] );
@@ -428,8 +460,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 							}
 							$options[5] = implode( ',', $result );
 
-							echo "<li class='col-xs-6 col-sm-4 col-md-4 cp-style-item " . esc_attr( $active ) . 'cp-style-' . esc_attr( $options[0] ) . "' data-groups='[" . esc_attr( $options[5] ) . "]' data-tags=['" . esc_attr( $options[6] ) . "']>";
-							echo '<a id="' . esc_attr( $options[0] ) . '" class="cp-style-item-link customize" data-module="' . esc_attr( ucwords( str_replace( '_', ' ', $module ) ) ) . '" href="' . esc_attr( esc_url( $url ) ) . '" ' . wp_kses_post( $data_view ) . ' data-id="' . esc_attr( $options[0] ) . '" data-style="panel-' . esc_attr( $options[0] ) . '"></a>';
+							echo "<li class='col-xs-6 col-sm-4 col-md-4 cp-style-item " . ( $active ) . 'cp-style-' . ( $options[0] ) . "' data-groups='[" . ( $options[5] ) . "]' data-tags=['" . ( $options[6] ) . "']>";
+							echo '<a id="' . ( $options[0] ) . '" class="cp-style-item-link customize" data-module="' . ( ucwords( str_replace( '_', ' ', $module ) ) ) . '" href="' . ( ( $url ) ) . '" ' . ( $data_view ) . ' data-id="' . ( $options[0] ) . '" data-style="panel-' . ( $options[0] ) . '"></a>';
 							echo '<div class="cp-style-item-box">';
 							echo '<div class="cp-style-screenshot">';
 
@@ -437,28 +469,28 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 
 							if ( $is_importable ) {
 								if ( $cp_connected ) {
-									echo '<img src="' . esc_attr( esc_url( $options[3] ) ) . '"/>';
+									echo '<img src="' . ( ( $options[3] ) ) . '"/>';
 								} else {
 									$display_action_links = false;
-									echo '<img src="' . esc_attr( esc_url( CP_BASE_URL ) ) . 'admin/assets/img/internet-issue.png" />';
+									echo '<img src="' . ( ( CP_BASE_URL ) ) . 'admin/assets/img/internet-issue.png" />';
 								}
 							} else {
-								echo '<img src="' . esc_attr( esc_url( $options[3] ) ) . '"/>';
+								echo '<img src="' . ( ( $options[3] ) ) . '"/>';
 							}
 
 							echo '</div>';
-							echo '<h3 class="cp-style-name">' . esc_html( $options[1] ) . '</h3>';
+							echo '<h3 class="cp-style-name">' . $helper_instance->esc_html( $options[1] ) . '</h3>';
 
 							if ( $display_action_links ) {
 								echo '<div class="cp-style-actions">';
 
 								if ( ! $is_importable ) {
-									echo '<a id="' . esc_attr( $options[0] ) . '" class="cp-style-item-link customize" data-module="' . esc_attr( ucwords( str_replace( '_', ' ', $module ) ) ) . '" href="' . esc_attr( esc_url( $url ) ) . '" ' . wp_kses_post( $data_view ) . ' data-id="' . esc_attr( $options[0] ) . '" data-style="panel-' . esc_attr( $options[0] ) . '">
-								<span class="cp-action-link customize"><span class="cp-action-link-icon connects-icon-cog"></span>' . esc_html__( 'Use This', 'smile' ) . '</span>';
+									echo '<a id="' . ( $options[0] ) . '" class="cp-style-item-link customize" data-module="' . ( ucwords( str_replace( '_', ' ', $module ) ) ) . '" href="' . ( ( $url ) ) . '" ' . ( $data_view ) . ' data-id="' . ( $options[0] ) . '" data-style="panel-' . ( $options[0] ) . '">
+								<span class="cp-action-link customize"><span class="cp-action-link-icon connects-icon-cog"></span>' . $helper_instance->esc_html__( 'Use This', 'smile' ) . '</span>';
 									echo '</a>';
 								} else {
-									echo '<a id="' . esc_attr( $options[0] ) . '" href="javascript:void(0);" class="cp-style-import-link" data-module="' . esc_attr( $module ) . '" data-href="' . esc_attr( esc_url( $url ) ) . '" ' . wp_kses_post( $data_view ) . ' data-preset="' . esc_attr( $options[7] ) . '" data-id="' . esc_attr( $options[0] ) . '" data-style="panel-' . esc_attr( $options[0] ) . '">
-								<span class="cp-action-link"><span class="cp-action-link-icon"><i class="connects-icon-inbox"></i></span><span class="cp-action-text">' . esc_html__( 'Import This', 'smile' ) . '</span></span>';
+									echo '<a id="' . ( $options[0] ) . '" href="javascript:void(0);" class="cp-style-import-link" data-module="' . ( $module ) . '" data-href="' . ( ( $url ) ) . '" ' . ( $data_view ) . ' data-preset="' . ( $options[7] ) . '" data-id="' . ( $options[0] ) . '" data-style="panel-' . ( $options[0] ) . '">
+								<span class="cp-action-link"><span class="cp-action-link-icon"><i class="connects-icon-inbox"></i></span><span class="cp-action-text">' . $helper_instance->esc_html__( 'Import This', 'smile' ) . '</span></span>';
 									echo '</a>';
 								}
 							}
@@ -473,17 +505,17 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 							$data_url = CP_BASE_URL . 'modules/' . $module . '/assets/demos/' . $options[0] . '/' . $options[0] . '.min.css';
 							if ( $display_action_links ) {
 								echo '<span class="cp-action-link style-demo"
-								data-style="' . esc_attr( $options[0] ) . '"
-								data-title="' . esc_attr( $options[1] ) . '"
-								data-url="' . esc_url( $data_url ) . '"
-								data-style-settings-method="' . esc_attr( $style_settings_method ) . '"
-								data-temp-name="' . esc_attr( $template_name ) . '"
-								data-module="' . esc_attr( $module ) . '"><span class="cp-action-link-icon connects-icon-link"></span>' . esc_html__( 'Live Preview', 'smile' ) . '</span></div>';
+								data-style="' . ( $options[0] ) . '"
+								data-title="' . ( $options[1] ) . '"
+								data-url="' . ( $data_url ) . '"
+								data-style-settings-method="' . ( $style_settings_method ) . '"
+								data-temp-name="' . ( $template_name ) . '"
+								data-module="' . ( $module ) . '"><span class="cp-action-link-icon connects-icon-link"></span>' . $helper_instance->esc_html__( 'Live Preview', 'smile' ) . '</span></div>';
 
 								echo '</div>'; // cp-style-item-box.
 							}
 						} else {
-							echo '<a id="' . esc_attr( $style ) . '" class="cp-style-item-link customize" data-module="' . esc_attr( ucwords( str_replace( '_', ' ', $module ) ) ) . '" href="' . esc_attr( esc_url( $url ) ) . '" ' . wp_kses_post( $data_view ) . ' data-id="' . esc_attr( $options[0] ) . '" data-style="panel-' . esc_attr( $options[0] ) . '">' . esc_html__( 'Customize', 'smile' ) . '</a>';
+							echo '<a id="' . ( $style ) . '" class="cp-style-item-link customize" data-module="' . ( ucwords( str_replace( '_', ' ', $module ) ) ) . '" href="' . ( ( $url ) ) . '" ' . ( $data_view ) . ' data-id="' . ( $options[0] ) . '" data-style="panel-' . ( $options[0] ) . '">' . $helper_instance->esc_html__( 'Customize', 'smile' ) . '</a>';
 						}
 					}
 					$start_date = isset( $style_settings['schedule']['start'] ) ? $style_settings['schedule']['start'] : '';
@@ -491,24 +523,24 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 
 					if ( isset( $style_view ) && ( 'edit' === $style_view || 'variant' === $style_view && 'edit' === $_GET['variant-test'] ) ) {
 						?>
-					<div class="customizer-wrapper smile-customizer-wrapper panel-<?php echo esc_attr( $style ); ?>" style="display: none;">
+					<div class="customizer-wrapper smile-customizer-wrapper panel-<?php echo ( $style ); ?>" style="display: none;">
 						<div id="cp-designer-form" class="design-form ecedcfsfdc">
-							<form class="cp-cust-form" id="form-<?php echo esc_attr( $options[0] ); ?>" data-action="<?php echo esc_attr( $data_action ); ?>" data-start="<?php echo esc_attr( $start_date ); ?>" data-end="<?php echo esc_attr( $end_date ); ?>">
+							<form class="cp-cust-form" id="form-<?php echo ( $options[0] ); ?>" data-action="<?php echo ( $data_action ); ?>" data-start="<?php echo ( $start_date ); ?>" data-end="<?php echo ( $end_date ); ?>">
 								<?php if ( isset( $_GET['preset'] ) && null === $key ) { ?>
-								<input type='hidden' name='style_preset' value="<?php echo esc_attr( sanitize_text_field( $_GET['preset'] ) ); ?>">
+								<input type='hidden' name='style_preset' value="<?php echo ( ( $_GET['preset'] ) ); ?>">
 								<?php } ?>
-								<input type="hidden" name="style" value="<?php echo esc_attr( $options[0] ); ?>" />
-								<input type="hidden" name="style_id" value="<?php echo esc_attr( $new_style_id ); ?>" />
-								<input type="hidden" name="style_type" value="<?php echo esc_attr( $module ); ?>">
-								<input type="hidden" name="option" value="<?php echo esc_attr( $data_option ); ?>" />
-								<input type="hidden" name="start_date" value="<?php echo esc_attr( $start_date ); ?>" />
-								<input type="hidden" name="end_date" value="<?php echo esc_attr( $end_date ); ?>" />
+								<input type="hidden" name="style" value="<?php echo ( $options[0] ); ?>" />
+								<input type="hidden" name="style_id" value="<?php echo ( $new_style_id ); ?>" />
+								<input type="hidden" name="style_type" value="<?php echo ( $module ); ?>">
+								<input type="hidden" name="option" value="<?php echo ( $data_option ); ?>" />
+								<input type="hidden" name="start_date" value="<?php echo ( $start_date ); ?>" />
+								<input type="hidden" name="end_date" value="<?php echo ( $end_date ); ?>" />
 								<?php if ( isset( $_GET['variant-style'] ) ) { ?>
 									<?php if ( isset( $_GET['action'] ) ) { ?>
-								<input type="hidden" name="variant-action" value="<?php echo esc_attr( sanitize_text_field( $_GET['action'] ) ); ?>" />
+								<input type="hidden" name="variant-action" value="<?php echo ( ( $_GET['action'] ) ); ?>" />
 								<?php } ?>
-								<input type="hidden" name="variant-style" value="<?php echo esc_attr( sanitize_text_field( $_GET['variant-style'] ) ); ?>" />
-								<input type="hidden" name="variant_style_id" value="<?php echo esc_attr( sanitize_text_field( $_GET['variant-style'] ) ); ?>" />
+								<input type="hidden" name="variant-style" value="<?php echo ( ( $_GET['variant-style'] ) ); ?>" />
+								<input type="hidden" name="variant_style_id" value="<?php echo ( ( $_GET['variant-style'] ) ); ?>" />
 								<?php } ?>
 
 								<?php
@@ -516,9 +548,9 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 								$timezone_name                = $timezone_settings['cp-timezone'];
 								$delete_style_nonce_for_admin = wp_create_nonce( 'cp-delete-style' );
 								?>
-								<input type="hidden" name="cp_gmt_offset" class ="cp_gmt_offset" value="<?php echo esc_attr( get_option( 'gmt_offset' ) ); ?>" />
-								<input type="hidden" name="cp_counter_timezone" class ="cp_counter_timezone" value="<?php echo esc_attr( $timezone_name ); ?>" />
-								<input type="hidden" id="cp-delete-style-nonce" value="<?php echo esc_attr( $delete_style_nonce_for_admin ); ?>" />                      		<div class="customizer metro" id="accordion-panel-<?php echo esc_attr( $options[0] ); ?>">
+								<input type="hidden" name="cp_gmt_offset" class ="cp_gmt_offset" value="<?php echo ( get_option( 'gmt_offset' ) ); ?>" />
+								<input type="hidden" name="cp_counter_timezone" class ="cp_counter_timezone" value="<?php echo ( $timezone_name ); ?>" />
+								<input type="hidden" id="cp-delete-style-nonce" value="<?php echo ( $delete_style_nonce_for_admin ); ?>" />                      		<div class="customizer metro" id="accordion-panel-<?php echo ( $options[0] ); ?>">
 									<div class="cp-new-cust-section">
 										<div class="cp-vertical-nav">
 											<div class="cp-vertical-nav-top cp-customize-section">
@@ -527,9 +559,9 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 													$section_id   = ( isset( $sections['section_id'] ) ) ? $sections['section_id'] : '';
 													$section_icon = ( isset( $sections['icon'] ) ) ? $sections['icon'] : '';
 													?>
-													<a href="#<?php echo esc_attr( $section_id ); ?>" class="cp-section" data-section-id="<?php echo esc_attr( $section_id ); ?>">
-													<span class="cp-tooltip-icon has-tip" data-position="right" title="<?php echo esc_attr( $key ); ?>">
-													<i class="<?php echo esc_attr( $section_icon ); ?>"></i>
+													<a href="#<?php echo ( $section_id ); ?>" class="cp-section" data-section-id="<?php echo ( $section_id ); ?>">
+													<span class="cp-tooltip-icon has-tip" data-position="right" title="<?php echo ( $key ); ?>">
+													<i class="<?php echo ( $section_icon ); ?>"></i>
 														</span>
 													</a>
 													<?php
@@ -542,25 +574,25 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 												if ( isset( $_GET['page'] ) ) {
 													$dashboard_link = add_query_arg(
 														array(
-															'page'  => sanitize_text_field( $_GET['page'] ),
+															'page'  => ( $_GET['page'] ),
 														),
 														admin_url( 'admin.php' )
 													);
 												}
 												?>
-												<a data-redirect="<?php echo esc_attr( esc_url( $dashboard_link ) ); ?>" href="javascript:void(0)" target="_blank" class="cp-section cp-dashboard-link">
+												<a data-redirect="<?php echo ( ( $dashboard_link ) ); ?>" href="javascript:void(0)" target="_blank" class="cp-section cp-dashboard-link">
 													<span class="cp-tooltip-icon has-tip" data-position="right" title="Dashboard">
 														<i class="connects-icon-esc"></i>
 													</span>
 												</a>
-												<a data-redirect="<?php echo esc_attr( esc_url( site_url() ) ); ?>" href="javascript:void(0)" target="_blank" class="cp-section cp-website-link" >
+												<a data-redirect="<?php echo ( ( site_url() ) ); ?>" href="javascript:void(0)" target="_blank" class="cp-section cp-website-link" >
 													<span class="cp-tooltip-icon has-tip" data-position="right" title="See Website">
 														<i class="connects-icon-globe"></i>
 													</span>
 												</a>
 											</div>
 
-											<div class="cp-vertical-nav-bottom <?php echo esc_attr( $hide_new_style ); ?>">
+											<div class="cp-vertical-nav-bottom <?php echo ( $hide_new_style ); ?>">
 
 												<a href="#" class="customize-footer-actions customize-collpase-act" >
 													<span class="cp-tooltip-icon has-tip customizer-collapse" title="Collapse">
@@ -583,14 +615,14 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 													<i class="connects-icon-plus"></i>
 												</span>
 											</a>
-											<a href="#" class="cp-save" id="button-save-panel-<?php echo esc_attr( $style ); ?>" data-style="<?php echo esc_attr( $style ); ?>">
+											<a href="#" class="cp-save" id="button-save-panel-<?php echo ( $style ); ?>" data-style="<?php echo ( $style ); ?>">
 
 												<span class="cp-tooltip-icon has-tip" data-position="top" title="Save">
 													<i class="connects-icon-inbox"></i>
 												</span>
 											</a>
 
-											<a data-redirect="<?php echo esc_attr( esc_url( $callback_url ) ); ?>" href="javascript:void(0)" class="close-button">
+											<a data-redirect="<?php echo ( ( $callback_url ) ); ?>" href="javascript:void(0)" class="close-button">
 												<span class="cp-tooltip-icon has-tip" data-position="top" title="Close">
 													<i class="connects-icon-cross"></i>
 												</span>
@@ -601,7 +633,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 									</div><!-- .cp-vertical-nav -->
 									<div class="cp-customizer-tabs-wrapper" style="height:100%;">
 										<div class="preview-notice">
-											<span class="theme-name site-title"><?php echo esc_html( $options[1] ); ?></span>
+											<span class="theme-name site-title"><?php echo $helper_instance->esc_html( $options[1] ); ?></span>
 										</div>
 										<?php
 										$count = 0;
@@ -609,7 +641,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 											$panels     = $sections['panels'];
 											$section_id = $sections['section_id'];
 											?>
-											<div id="<?php echo esc_attr( $section_id ); ?>" class="cp-customizer-tab accordion with-marker cp-tab-<?php echo esc_attr( $count ); ?>" data-role="accordion" data-closeany="true">
+											<div id="<?php echo ( $section_id ); ?>" class="cp-customizer-tab accordion with-marker cp-tab-<?php echo ( $count ); ?>" data-role="accordion" data-closeany="true">
 																<?php
 																$cnt = 0;
 																foreach ( $panels as $panel_key => $panel ) {
@@ -621,7 +653,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 																		echo 'collapsed';
 																	}
 																	?>
-															" ><?php echo esc_attr( $panel_key ); ?></a>
+															" ><?php echo ( $panel_key ); ?></a>
 															<div class="content" 
 																	<?php
 																	if ( 'Name' === $panel_key ) {
@@ -637,11 +669,11 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 																		<strong>
 																			<label for="cp_style_title"><?php esc_html_e( 'Name This Design', 'smile' ); ?></label>
 																		</strong>
-																		<span class="cp-tooltip-icon has-tip" data-position="right" style="cursor: help;float: right;" title="<?php esc_attr_e( 'A unique & descriptive name will help you in future as it would appear in the dashboard, analytics, etc.', 'smile' ); ?>">
+																		<span class="cp-tooltip-icon has-tip" data-position="right" style="cursor: help;float: right;" title="<?php _e( 'A unique & descriptive name will help you in future as it would appear in the dashboard, analytics, etc.', 'smile' ); ?>">
 																			<i class="dashicons dashicons-editor-help"></i>
 																		</span>
 																		<p>
-																			<input type="text" id="cp_style_title"  class="form-control smile-input smile-textfield style_title textfield " name="new_style" data-style="<?php echo esc_attr( stripslashes( $style_name ) ); ?>" value="<?php echo esc_attr( stripslashes( $style_name ) ); ?>">
+																			<input type="text" id="cp_style_title"  class="form-control smile-input smile-textfield style_title textfield " name="new_style" data-style="<?php echo ( stripslashes( $style_name ) ); ?>" value="<?php echo ( stripslashes( $style_name ) ); ?>">
 																		</p>
 																	</div>
 
@@ -707,7 +739,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 															<div class="cp-responsive-notice">
 																<div class="smile-element-container">
 																	<div class="link-title" style="display: block;padding: 50px 20px;">
-																		<?php echo esc_html__( 'Responsive preview here is roughly displayed and might not be 100% correct. For accurate preview, please check output on the actual device.', 'smile' ); ?>
+																		<?php echo $helper_instance->esc_html__( 'Responsive preview here is roughly displayed and might not be 100% correct. For accurate preview, please check output on the actual device.', 'smile' ); ?>
 																	</div>
 																</div>
 															</div>
@@ -721,7 +753,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 															<div class="row smile-style-search">
 																<div class="container">
 																	<div class="col-sm-12">
-																		<input type="search" class="js-shuffle-search" id="style-search" name="style-search" placeholder="<?php esc_attr_e( 'Search Template', 'smile' ); ?>">
+																		<input type="search" class="js-shuffle-search" id="style-search" name="style-search" placeholder="<?php _e( 'Search Template', 'smile' ); ?>">
 																	</div>
 																</div>
 															</div>
@@ -744,7 +776,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 																		continue;
 																	}
 
-																	$rand               = substr( md5( uniqid() ), wp_rand( 0, 26 ), 5 );
+																	$rand               = substr( md5( uniqid() ), $helper_instance->wp_rand( 0, 26 ), 5 );
 																	$dynamic_style_name = 'cp_id_' . $rand;
 																	$new_style_id       = ( isset( $style_id ) && '' !== $style_id ) ? $style_id : $dynamic_style_name;
 																	if ( isset( $_GET['variant-test'] ) && 'new' === $_GET['variant-test'] ) {
@@ -758,7 +790,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 																		$tags = 'promotions';
 																	}
 
-																	$page = isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '';
+																	$page = isset( $_GET['page'] ) ? ( $_GET['page'] ) : '';
 
 																	$callback_url = 'admin.php?page=' . $page;
 
@@ -768,21 +800,21 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 
 																		$callback_url = 'admin.php?page=' . $page;
 																	} else {
-																		$sid          = isset( $_GET['style_id'] ) ? $_GET['style_id'] : esc_attr( $_GET['variant-style'] );
-																		$pid          = isset( $_GET['parent-style'] ) ? $_GET['parent-style'] : esc_attr( $_GET['style_id'] );
+																		$sid          = isset( $_GET['style_id'] ) ? $_GET['style_id'] : ( $_GET['variant-style'] );
+																		$pid          = isset( $_GET['parent-style'] ) ? $_GET['parent-style'] : ( $_GET['style_id'] );
 																		$callback_url = 'admin.php?page=' . $page . '&style-view=variant&variant-style=' . $sid . '&style=' . $pid . '&theme=' . $theme;
 
 																		$url = 'admin.php?page=' . $page . '&style-view=variant&variant-test=edit&action=new&variant-style=' . $dynamic_style_name . '&style=' . $style_name . '&style_id=' . $variant_style . '&theme=' . $style_options[0];
 																	}
 
-																	echo '<div class="cp-style-item ' . esc_attr( $active ) . 'cp-style-' . esc_attr( $style_title ) . '" data-tags=["' . esc_attr( $tags ) . '"] style="margin: 15px;">';
+																	echo '<div class="cp-style-item ' . ( $active ) . 'cp-style-' . ( $style_title ) . '" data-tags=["' . ( $tags ) . '"] style="margin: 15px;">';
 																	echo '<div class="cp-style-item-box">';
 
-																	echo '<a id="' . esc_attr( $style_title ) . '" class="cp-new-style-link" href="' . esc_attr( esc_url( $url ) ) . '" ' . wp_kses_post( $data_view ) . ' data-id="' . esc_attr( $style_title ) . '" data-style-title="' . esc_attr( $style_options[0] ) . '" data-style="' . esc_attr( $style_id ) . '" data-option="smile_' . esc_attr( $module ) . '_styles">';
+																	echo '<a id="' . ( $style_title ) . '" class="cp-new-style-link" href="' . ( ( $url ) ) . '" ' . ( $data_view ) . ' data-id="' . ( $style_title ) . '" data-style-title="' . ( $style_options[0] ) . '" data-style="' . ( $style_id ) . '" data-option="smile_' . ( $module ) . '_styles">';
 																	echo '<div class="cp-style-screenshot">';
-																	echo '<img src="' . esc_attr( esc_url( $style_options[3] ) ) . '"/>';
+																	echo '<img src="' . ( ( $style_options[3] ) ) . '"/>';
 																	echo '</div>';
-																	echo '<h3 class="cp-style-name">' . esc_html( $style_options[1] ) . '</h3>';
+																	echo '<h3 class="cp-style-name">' . $helper_instance->esc_html( $style_options[1] ) . '</h3>';
 																	echo '</a>';
 																	echo '</div>'; // .cp-style-item-box.
 																		echo '</div>'; // .cp-style-item .
@@ -799,7 +831,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 		</form><!-- .cp-cust-form -->
 	</div> <!-- .design-form -->
 						<?php
-						$sanitize_theme = isset( $_GET['theme'] ) ? sanitize_text_field( $_GET['theme'] ) : '';
+						$sanitize_theme = isset( $_GET['theme'] ) ? ( $_GET['theme'] ) : '';
 
 						$iframe_url = add_query_arg(
 							array(
@@ -813,7 +845,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 						);
 
 						?>
-					<div class="design-content" data-demo-id="<?php echo esc_attr( $sanitize_theme ); ?>" data-class="<?php echo esc_attr( $class ); ?>" data-module="<?php echo esc_attr( $module ); ?>" data-js-url="<?php echo esc_attr( esc_url( $options[4] ) ); ?>" data-iframe-url="<?php echo esc_attr( esc_url( $iframe_url ) ); ?>">
+					<div class="design-content" data-demo-id="<?php echo ( $sanitize_theme ); ?>" data-class="<?php echo ( $class ); ?>" data-module="<?php echo ( $module ); ?>" data-js-url="<?php echo ( ( $options[4] ) ); ?>" data-iframe-url="<?php echo ( ( $iframe_url ) ); ?>">
 						<div class="live-design-area">
 							<div class="design-area-loading">
 								<!-- <span class="spinner"></span> -->

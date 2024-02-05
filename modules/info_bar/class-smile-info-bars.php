@@ -7,10 +7,11 @@
 
 defined( '_PS_VERSION_' ) || die( 'No direct script access allowed!' );
 
+
 if ( ! defined( 'CP_BASE_DIR_IFB' ) ) {
-	define( 'CP_BASE_DIR_IFB', plugin_dir_path( __FILE__ ) );
+	define( 'CP_BASE_DIR_IFB', CP_BASE_DIR . '/modules/info_bar/' );
 }
-require_once CP_BASE_DIR_IFB . '/functions/functions.php';
+// require_once CP_BASE_DIR_IFB . '/functions/functions.php';
 
 if ( ! class_exists( 'Convert_Plug_Smile_Info_Bars' ) ) {
 	/**
@@ -32,17 +33,22 @@ if ( ! class_exists( 'Convert_Plug_Smile_Info_Bars' ) ) {
 		 */
 		public static $options = array();
 
+		public $helper;
+
 		/**
 		 * Constructor.
 		 */
 		public function __construct() {
-			add_action( 'admin_menu', array( $this, 'add_admin_menu_page' ), 999 );
-			add_action( 'admin_head', array( $this, 'load_customizer_scripts' ) );
-			add_action( 'wp_footer', array( $this, 'load_info_bar_globally' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_scripts' ), 101 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
-			add_action( 'init', array( $this, 'register_theme_templates' ) );
-			add_filter( 'admin_body_class', array( $this, 'cp_admin_body_class' ) );
+
+			$this->helper = Helper_Global::get_instance();
+
+			$this->helper->add_action( 'admin_menu', array( $this, 'add_admin_menu_page' ), 999 );
+			$this->helper->add_action( 'admin_head', array( $this, 'load_customizer_scripts' ) );
+			$this->helper->add_action( 'wp_footer', array( $this, 'load_info_bar_globally' ) );
+			$this->helper->add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_scripts' ), 101 );
+			$this->helper->add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+			// $this->helper->add_action( 'init', array( $this, 'register_theme_templates' ) );
+			// $this->helper->add_filter( 'admin_body_class', array( $this, 'cp_admin_body_class' ) );
 			require_once CP_BASE_DIR_IFB . 'info-bar-preset.php';
 		}
 
@@ -77,18 +83,20 @@ if ( ! class_exists( 'Convert_Plug_Smile_Info_Bars' ) ) {
 		 * Function Name: add_admin_menu_page.
 		 */
 		public function add_admin_menu_page() {
-			$page = add_submenu_page(
-				CP_PLUS_SLUG,
-				'Info Bar Designer',
-				'Info Bar',
-				'access_cp',
-				'smile-info_bar-designer',
-				array( $this, 'info_bar_dashboard' )
-			);
+			// $page = add_submenu_page(
+			// 	CP_PLUS_SLUG,
+			// 	'Info Bar Designer',
+			// 	'Info Bar',
+			// 	'access_cp',
+			// 	'smile-info_bar-designer',
+			// 	array( $this, 'info_bar_dashboard' )
+			// );
+
+			$this->info_bar_dashboard();
 			$obj  = new Convert_Plug();
-			add_action( 'admin_print_scripts-' . $page, array( $obj, 'convert_admin_scripts' ) );
-			add_action( 'admin_print_scripts-' . $page, array( $this, 'info_bar_admin_scripts' ) );
-			add_action( 'admin_footer-' . $page, array( $this, 'cp_admin_footer' ) );
+			// $this->helper->add_action( 'admin_print_scripts-' . $page, array( $obj, 'convert_admin_scripts' ) );
+			$this->helper->add_action( 'admin_print_scripts', array( $this, 'info_bar_admin_scripts' ) );
+			// $this->helper->add_action( 'admin_footer-' . $page, array( $this, 'cp_admin_footer' ) );
 		}
 
 		/**
@@ -120,14 +128,15 @@ if ( ! class_exists( 'Convert_Plug_Smile_Info_Bars' ) ) {
 		 * Function Name: info_bar_dashboard.
 		 */
 		public function info_bar_dashboard() {
-			if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
-				$page           = isset( $_GET['style-view'] ) ? esc_attr( $_GET['style-view'] ) : 'main';
-				$analytics_data = get_option( 'smile_style_analytics' );
-				$variant_tests  = get_option( 'info_bar_variant_tests' );
-				$prev_styles    = get_option( 'smile_info_bar_styles' );
+			// if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
+			if ( isset( $_REQUEST['token'] ) && $_REQUEST['controller'] = 'AdminConvInfobar') {
+				$page           = isset( $_GET['style-view'] ) ? $_GET['style-view'] : 'main';
+				$analytics_data = $this->helper->convertica_get_option( 'smile_style_analytics' );
+				$variant_tests  = $this->helper->convertica_get_option( 'info_bar_variant_tests' );
+				$prev_styles    = $this->helper->convertica_get_option( 'smile_info_bar_styles' );
 
 				// load default option set.
-				if ( is_admin() ) {
+				if ( $this->helper->is_admin() ) {
 					require_once CP_BASE_DIR_IFB . '/functions/functions.options.php';
 				}
 
@@ -177,8 +186,8 @@ if ( ! class_exists( 'Convert_Plug_Smile_Info_Bars' ) ) {
 			$info_bar_style_delay  = '';
 			$info_bar_cookie_delay = '';
 			$live_styles           = cp_get_live_styles( 'info_bar' );
-			$prev_styles           = get_option( 'smile_info_bar_styles' );
-			$smile_variant_tests   = get_option( 'info_bar_variant_tests' );
+			$prev_styles           = $this->helper->convertica_get_option( 'smile_info_bar_styles' );
+			$smile_variant_tests   = $this->helper->convertica_get_option( 'info_bar_variant_tests' );
 
 			if ( is_array( $live_styles ) && ! empty( $live_styles ) ) {
 				global $post;
@@ -429,7 +438,7 @@ if ( ! function_exists( 'smile_info_bar_popup' ) ) {
 		}
 		echo $output; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
-	add_shortcode( 'smile_info_bar', 'smile_info_bar_popup' );
+	// add_shortcode( 'smile_info_bar', 'smile_info_bar_popup' );
 }
 
 if ( ! function_exists( 'cp_info_bar_custom' ) ) {
@@ -507,5 +516,5 @@ if ( ! function_exists( 'cp_info_bar_custom' ) ) {
 		}
 		return ob_get_clean();
 	}
-	add_shortcode( 'cp_info_bar', 'cp_info_bar_custom' );
+	// add_shortcode( 'cp_info_bar', 'cp_info_bar_custom' );
 }

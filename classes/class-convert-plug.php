@@ -534,7 +534,17 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 		 * @since 1.0
 		 */
 		public function add_admin_menu() {
-			$this->admin_dashboard();
+
+			$controller = Context::getContext()->controller->controller_name;
+			switch ( $controller ) {
+				case 'AdminConvInfobar':
+					// $this->admin_dashboard();
+					break;
+				default:
+					$this->admin_dashboard();
+					break;
+			}
+			
 
 			// add_action( 'admin_print_scripts-' . $page, array( $this, 'convert_admin_scripts' ) );
 			// add_action( 'admin_footer-' . $page, array( $this, 'cp_admin_footer' ) );
@@ -643,7 +653,7 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 			// add_action( 'admin_print_scripts-' . $google_manager, array( $ultimate_google_font_manager, 'admin_google_font_scripts' ) );
 			// add_action( 'admin_footer-' . $google_manager, array( $this, 'cp_admin_footer' ) );
 
-			// $_REQUEST['cp_admin_page_nonce'] = wp_create_nonce( 'cp_admin_page' );
+			// $_REQUEST['cp_admin_page_nonce'] = 'cp_admin_page_init';
 		}
 
 		/**

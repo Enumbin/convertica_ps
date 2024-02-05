@@ -10,7 +10,7 @@ if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && ! wp_verify_nonce( $_REQUEST['
 }
 
 // Remove All Styles.
-require_once CP_BASE_DIR . 'admin/contacts/views/class-cp-paginator.php';
+require_once CP_BASE_DIR . '/admin/contacts/views/class-cp-paginator.php';
 
 $remove_styles = ( isset( $_GET['remove-styles'] ) ) ? $_GET['remove-styles'] : 'false';
 if ( 'true' === $remove_styles ) {
@@ -96,7 +96,7 @@ if ( is_array( $prev_styles ) ) {
 
 $limit         = ( isset( $_GET['limit'] ) ) ? intval( $_GET['limit'] ) : 20;
 $info_page     = ( isset( $_GET['cont-page'] ) ) ? intval( $_GET['cont-page'] ) : 1;
-$links         = ( isset( $_GET['links'] ) ) ? esc_attr( $_GET['links'] ) : 1;
+$links         = ( isset( $_GET['links'] ) ) ? $_GET['links']  : 1;
 $info_orderby  = ( isset( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : false;
 $info_order    = ( isset( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : false;
 $total         = ( is_array( $prev_styles ) ) ? count( $prev_styles ) : 0;
@@ -142,44 +142,48 @@ if ( $prev_styles ) {
 	$prev_styles = $result->data;
 }
 
-$cp_create_new_info_bar = add_query_arg(
-	array(
-		'page'       => 'smile-info_bar-designer',
-		'style-view' => 'new',
-	),
-	admin_url( 'admin.php' )
-);
-$cp_analytics_info_bar  = add_query_arg(
-	array(
-		'page'       => 'smile-info_bar-designer',
-		'style-view' => 'analytics',
-	),
-	admin_url( 'admin.php' )
-);
+$cp_create_new_info_bar = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], ['page' => 'smile-info_bar-designer', 'style-view' => 'new']);
+// $cp_create_new_info_bar = add_query_arg(
+// 	array(
+// 		'page'       => 'smile-info_bar-designer',
+// 		'style-view' => 'new',
+// 	),
+// 	admin_url( 'admin.php' )
+// );
+$cp_analytics_info_bar = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], ['page' => 'smile-info_bar-designer', 'style-view' => 'analytics']);
+// $cp_analytics_info_bar  = add_query_arg(
+// 	array(
+// 		'page'       => 'smile-info_bar-designer',
+// 		'style-view' => 'analytics',
+// 	),
+// 	admin_url( 'admin.php' )
+// );
 
 ?>
+<div id="main">
+    <div id="content"  class="bootstrap ">
 <div class="wrap about-wrap bend cp-info_bar-main">
 	<div class="wrap-container">
 		<div class="bend-heading-section">
-			<h1><?php esc_attr_e( 'Info Bar Designer', 'smile' ); ?>
+			<h1><?php  echo 'Info Bar Designer'; ?>
 			</h1>
 
-			<a href="<?php echo esc_attr( esc_url( $cp_create_new_info_bar ) ); ?>" class="bsf-connect-download-csv" style="margin-right: 25px !important;"><i class="connects-icon-square-plus" style="line-height: 30px;font-size: 22px;"></i>
-				<?php esc_attr_e( 'Create New Info Bar', 'smile' ); ?>
+			<a href="<?php echo $cp_create_new_info_bar; ?>" class="bsf-connect-download-csv" style="margin-right: 25px !important;"><i class="connects-icon-square-plus" style="line-height: 30px;font-size: 22px;"></i>
+				<?php  echo 'Create New Info Bar'; ?>
 			</a>
-			<a href="<?php echo esc_attr( esc_url( $cp_analytics_info_bar ) ); ?>"  style="margin-right: 25px !important;" class="bsf-connect-download-csv"><i class="connects-icon-bar-graph-2" style="line-height: 30px;"></i>
-				<?php esc_attr_e( 'Analytics', 'smile' ); ?>
+			<a href="<?php echo $cp_analytics_info_bar; ?>"  style="margin-right: 25px !important;" class="bsf-connect-download-csv"><i class="connects-icon-bar-graph-2" style="line-height: 30px;"></i>
+				<?php  echo 'Analytics'; ?>
 			</a>
 
-			<a href="#" style="margin-right: 25px !important;" class="bsf-connect-download-csv cp-import-style" data-module="info_bar" data-uploader_title="<?php esc_attr_e( 'Upload Your Exported file', 'smile' ); ?>" data-uploader_button_text="<?php esc_attr_e( 'Import Style', 'smile' ); ?>" onclick_="jQuery('.cp-import-overlay, .cp-style-importer').fadeIn('fast');"><i class="connects-icon-upload" style="line-height: 30px;font-size: 22px;"></i>
-				<?php esc_attr_e( 'Import Info Bar', 'smile' ); ?>
+			<a href="#" style="margin-right: 25px !important;" class="bsf-connect-download-csv cp-import-style" data-module="info_bar" data-uploader_title="<?php  echo 'Upload Your Exported file'; ?>" data-uploader_button_text="<?php echo 'Import Style'; ?>" onclick_="jQuery('.cp-import-overlay, .cp-style-importer').fadeIn('fast');"><i class="connects-icon-upload" style="line-height: 30px;font-size: 22px;"></i>
+				<?php echo 'Import Info Bar'; ?>
 
 			</a>
 			<?php $search_active_class = ( '' !== $sq ) ? 'bsf-cntlist-top-search-act' : ''; ?>
 			<?php if ( 0 !== $total ) { ?>
-			<span class="bsf-contact-list-top-search <?php echo esc_attr( $search_active_class ); ?>"><i class="connects-icon-search" style="line-height: 30px;"></i>
+			<span class="bsf-contact-list-top-search <?php echo $search_active_class; ?>"><i class="connects-icon-search" style="line-height: 30px;"></i>
 				<form method="post" class="bsf-cntlst-top-search">
-					<input class="bsf-cntlst-top-search-input" type="search" id="post-search-input" name="sq" placeholder="<?php esc_attr_e( 'Search', 'smile' ); ?>" value="<?php echo esc_attr( $sq ); ?>">
+					<input class="bsf-cntlst-top-search-input" type="search" id="post-search-input" name="sq" placeholder="<?php  echo 'Search'; ?>" value="<?php echo $sq; ?>">
 					<i class="bsf-cntlst-top-search-submit connects-icon-search"></i>
 				</form>
 			</span>
@@ -195,18 +199,18 @@ $cp_analytics_info_bar  = add_query_arg(
 		</hr>
 		<div class="container">
 			<?php
-			$change_status_nonce   = wp_create_nonce( 'cp-change-style-status' );
-			$reset_analytics_nonce = wp_create_nonce( 'cp-reset-analytics' );
-			$delete_style_nonce    = wp_create_nonce( 'cp-delete-style' );
-			$duplicate_style_nonce = wp_create_nonce( 'cp-duplicate-nonce' );
+			// $change_status_nonce   = wp_create_nonce( 'cp-change-style-status' );
+			// $reset_analytics_nonce = wp_create_nonce( 'cp-reset-analytics' );
+			// $delete_style_nonce    = wp_create_nonce( 'cp-delete-style' );
+			// $duplicate_style_nonce = wp_create_nonce( 'cp-duplicate-nonce' );
 			?>
-			<input type="hidden" id="cp-change-status-nonce" value="<?php echo esc_attr( $change_status_nonce ); ?>" />
-			<input type="hidden" id="cp-reset-analytics-nonce" value="<?php echo esc_attr( $reset_analytics_nonce ); ?>" />
-			<input type="hidden" id="cp-delete-style-nonce" value="<?php echo esc_attr( $delete_style_nonce ); ?>" />
-			<input type="hidden" id="cp-duplicate-nonce" value="<?php echo esc_attr( $duplicate_style_nonce ); ?>" />
+			<input type="hidden" id="cp-change-status-nonce" value="<?php // echo $change_status_nonce ); ?>" />
+			<input type="hidden" id="cp-reset-analytics-nonce" value="<?php // echo $reset_analytics_nonce ); ?>" />
+			<input type="hidden" id="cp-delete-style-nonce" value="<?php // echo $delete_style_nonce ); ?>" />
+			<input type="hidden" id="cp-duplicate-nonce" value="<?php // echo $duplicate_style_nonce ); ?>" />
 
 			<div id="smile-stored-styles">
-				<input type="hidden" id="cp-change-status-nonce" value="<?php echo esc_attr( $change_status_nonce ); ?>" />
+				<input type="hidden" id="cp-change-status-nonce" value="<?php // echo $change_status_nonce; ?>" />
 				<div id="smile-stored-styles">
 					<table class="wp-list-table widefat fixed cp-list-optins cp-info_bar-list-optins">
 						<?php
@@ -246,21 +250,21 @@ $cp_analytics_info_bar  = add_query_arg(
 							?>
 						<thead>
 							<tr>
-								<th scope="col" id="style-name" class="manage-column column-style <?php echo esc_attr( $sorting_style_name_class ); ?>">
+								<th scope="col" id="style-name" class="manage-column column-style <?php echo $sorting_style_name_class; ?>">
 									<input type="checkbox" name="cp-select-chk" value='' class="cp-select-all"/></th>
-									<th scope="col" id="style-name" class="manage-column column-style <?php echo esc_attr( $sorting_style_name_class ); ?>">
-										<a href="<?php echo esc_attr( esc_url( $info_bar_url ) ); ?>">
+									<th scope="col" id="style-name" class="manage-column column-style <?php echo $sorting_style_name_class; ?>">
+										<a href="<?php echo $info_bar_url; ?>">
 											<span class="connects-icon-ribbon"></span>
-											<?php esc_attr_e( 'Info Bar Name', 'smile' ); ?></a></th>
-											<th scope="col" id="impressions" class="manage-column column-impressions <?php echo esc_attr( $sorting_list_imp_class ); ?>">
-												<a href="<?php echo esc_attr( esc_url( $impression_info_bar_url ) ); ?>">
+											<?php  echo 'Info Bar Name'; ?></a></th>
+											<th scope="col" id="impressions" class="manage-column column-impressions <?php echo $sorting_list_imp_class; ?>">
+												<a href="<?php echo $impression_info_bar_url; ?>">
 													<span class="connects-icon-disc"></span>
-													<?php esc_attr_e( 'Impressions', 'smile' ); ?></a></th>
-													<th scope="col" id="status" class="manage-column column-status <?php echo esc_attr( $sorting_status_class ); ?>"><a href="<?php echo esc_attr( esc_url( $status_info_bar_url ) ); ?>">
+													<?php  echo 'Impressions'; ?></a></th>
+													<th scope="col" id="status" class="manage-column column-status <?php echo $sorting_status_class; ?>"><a href="<?php echo $status_info_bar_url; ?>">
 														<span class="connects-icon-toggle"></span>
-														<?php esc_attr_e( 'Status', 'smile' ); ?></a></th>
+														<?php  echo 'Status'; ?></a></th>
 														<th scope="col" id="actions" class="manage-column column-actions" style="min-width: 300px;"><span class="connects-icon-cog"></span>
-															<?php esc_attr_e( 'Actions', 'smile' ); ?></th>
+															<?php  echo 'Actions'; ?></th>
 														</tr>
 													</thead>
 						<?php } ?>
@@ -328,9 +332,9 @@ $cp_analytics_info_bar  = add_query_arg(
 																}
 
 																if ( 1 === $live ) {
-																	$info_status .= '<span data-live="1" class="cp-status cp-main-variant-status"><i class="connects-icon-play"></i><span>' . __( 'Live', 'smile' ) . '</span></span>';
+																	$info_status .= '<span data-live="1" class="cp-status cp-main-variant-status"><i class="connects-icon-play"></i><span>' . 'Live' . '</span></span>';
 																} elseif ( 0 === $live ) {
-																	$info_status .= '<span data-live="0" class="cp-status cp-main-variant-status"><i class="connects-icon-pause"></i><span>' . __( 'Pause', 'smile' ) . '</span></span>';
+																	$info_status .= '<span data-live="0" class="cp-status cp-main-variant-status"><i class="connects-icon-pause"></i><span>' . 'Pause' . '</span></span>';
 																} else {
 																	$schedule_data = maybe_unserialize( $style['style_settings'] );
 																	if ( isset( $schedule_data['schedule'] ) ) {
@@ -347,7 +351,7 @@ $cp_analytics_info_bar  = add_query_arg(
 																	}
 
 																		$time         = '<span> ( ' . $first . ' to ' . $second . ' )</span>';
-																		$info_status .= '<span data-live="2" class="cp-status"><i class="connects-icon-clock"></i><span title="' . $info_title . '">' . __( 'Scheduled', 'smile' ) . $time . '</span></span>';
+																		$info_status .= '<span data-live="2" class="cp-status"><i class="connects-icon-clock"></i><span title="' . $info_title . '">' . 'Scheduled' . $time . '</span></span>';
 																}
 
 																if ( $has_variants ) {
@@ -357,19 +361,19 @@ $cp_analytics_info_bar  = add_query_arg(
 																if ( ! $has_variants ) {
 																	$info_status .= '<ul class="manage-column-menu">';
 																	if ( 1 !== $live && '1' !== $live ) {
-																		$info_status .= '<li><a href="#" class="change-status" data-style-id="' . $style_id . '" data-live="1" data-option="smile_info_bar_styles"><i class="connects-icon-play"></i><span>' . __( 'Live', 'smile' ) . '</span></a></li>';
+																		$info_status .= '<li><a href="#" class="change-status" data-style-id="' . $style_id . '" data-live="1" data-option="smile_info_bar_styles"><i class="connects-icon-play"></i><span>' . 'Live' . '</span></a></li>';
 																	}
 																	if ( 0 !== $live && '0' !== $live && '' !== $live ) {
-																		$info_status .= '<li><a href="#" class="change-status" data-style-id="' . $style_id . '" data-live="0" data-option="smile_info_bar_styles"><i class="connects-icon-pause"></i><span>' . __( 'Pause', 'smile' ) . '</span></a></li>';
+																		$info_status .= '<li><a href="#" class="change-status" data-style-id="' . $style_id . '" data-live="0" data-option="smile_info_bar_styles"><i class="connects-icon-pause"></i><span>' . 'Pause' . '</span></a></li>';
 																	}
 																	if ( 2 !== $live && '2' !== $live ) {
-																		$info_status .= '<li><a href="#" class="change-status" data-style-id="' . $style_id . '" data-live="2" data-option="smile_info_bar_styles" data-schedule="1"><i class="connects-icon-clock"></i><span>' . __( 'Schedule', 'smile' ) . '</span></a></li>';
+																		$info_status .= '<li><a href="#" class="change-status" data-style-id="' . $style_id . '" data-live="2" data-option="smile_info_bar_styles" data-schedule="1"><i class="connects-icon-clock"></i><span>' . 'Schedule' . '</span></a></li>';
 																	}
 																	$info_status .= '</ul>';
 																}
 																$info_status .= '</span>';
 																?>
-																<tr id="<?php echo esc_attr( $key ); ?>" class="ui-sortable-handle 
+																<tr id="<?php echo $key; ?>" class="ui-sortable-handle 
 																	<?php
 																	if ( $has_variants ) {
 																		echo 'cp-variant-exist';
@@ -393,7 +397,7 @@ $cp_analytics_info_bar  = add_query_arg(
 																			);
 
 																			?>
-																		<td class="name column-name"><a href="<?php echo esc_attr( esc_url( $info_bar_variant_url ) ); ?>"  ><?php echo 'Variants of ' . esc_html( urldecode( $style_name ) ); ?> </a></td>
+																		<td class="name column-name"><a href="<?php echo $info_bar_variant_url; ?>"  ><?php echo 'Variants of ' . esc_html( urldecode( $style_name ) ); ?> </a></td>
 																			<?php
 																		} else {
 																			$info_bar_non_variant_url = add_query_arg(
@@ -406,10 +410,10 @@ $cp_analytics_info_bar  = add_query_arg(
 																				admin_url( 'admin.php' )
 																			);
 																			?>
-																		<td class="name column-name"><a href="<?php echo esc_attr( esc_url( $info_bar_non_variant_url ) ); ?>" target ="_blank" ><?php echo esc_html( urldecode( $style_name ) ); ?> </a></td>
+																		<td class="name column-name"><a href="<?php echo $info_bar_non_variant_url; ?>" target ="_blank" ><?php echo esc_html( urldecode( $style_name ) ); ?> </a></td>
 																		<?php } ?>
-																		<td class="column-impressions"><?php echo esc_attr( $impressions ); ?></td>
-																		<td class="column-status"><?php echo wp_kses_post( $info_status ); ?></td>
+																		<td class="column-impressions"><?php echo $impressions; ?></td>
+																		<td class="column-status"><?php echo $info_status; ?></td>
 																		<td class="actions column-actions">
 																			<?php
 																			$info_bar_variant_url = add_query_arg(
@@ -423,16 +427,16 @@ $cp_analytics_info_bar  = add_query_arg(
 																				admin_url( 'admin.php' )
 																			);
 																			?>
-																			<a class="action-list" data-style="<?php echo rawurlencode( $style_id ); ?>" data-option="smile_info_bar_styles" href="<?php echo esc_attr( esc_url( $info_bar_variant_url ) ); ?>" ><i class="connects-icon-share"></i><span class="action-tooltip">
+																			<a class="action-list" data-style="<?php echo rawurlencode( $style_id ); ?>" data-option="smile_info_bar_styles" href="<?php echo $info_bar_variant_url; ?>" ><i class="connects-icon-share"></i><span class="action-tooltip">
 																				<?php if ( $has_variants ) { ?>
-																					<?php esc_attr_e( 'See Variants', 'smile' ); ?>
+																					<?php  echo 'See Variants'; ?>
 																				<?php } else { ?>
-																					<?php esc_attr_e( 'Create Variant', 'smile' ); ?>
+																					<?php  echo 'Create Variant'; ?>
 																				<?php } ?>
 																			</span></a>
 																			<?php if ( ! $has_variants ) { ?>
 																			<a class="action-list copy-style-icon" data-style="<?php echo rawurlencode( $style_id ); ?>" data-module="info_bar" data-option="smile_info_bar_styles" style="margin-left: 25px;" href="#"><i class="connects-icon-paper-stack" style="font-size: 20px;"></i><span class="action-tooltip">
-																				<?php esc_attr_e( 'Duplicate Info bar', 'smile' ); ?>
+																				<?php  echo 'Duplicate Info bar'; ?>
 																			</span></a>
 																			<?php } ?>
 																			<?php
@@ -462,8 +466,8 @@ $cp_analytics_info_bar  = add_query_arg(
 																				admin_url( 'admin.php' )
 																			);
 																			?>
-																			<a class="action-list" data-style="<?php echo rawurlencode( $style_id ); ?>" data-option="smile_info_bar_styles" style="margin-left: 25px;" href="<?php echo esc_attr( esc_url( $cp_analytics_info_bar_comp_factor ) ); ?>"><i class="connects-icon-bar-graph-2"></i><span class="action-tooltip">
-																				<?php esc_attr_e( 'View Analytics', 'smile' ); ?>
+																			<a class="action-list" data-style="<?php echo rawurlencode( $style_id ); ?>" data-option="smile_info_bar_styles" style="margin-left: 25px;" href="<?php echo $cp_analytics_info_bar_comp_factor; ?>"><i class="connects-icon-bar-graph-2"></i><span class="action-tooltip">
+																				<?php  echo 'View Analytics'; ?>
 																			</span></a>
 																			<?php
 																			$export_infobar_nonce = wp_create_nonce( 'export-infobar-' . $style_id );
@@ -472,7 +476,7 @@ $cp_analytics_info_bar  = add_query_arg(
 
 																			<form method="post" class="cp-export-contact" action="<?php echo esc_url( $form_action ); ?>">
 
-																			<input type="hidden" id="cp-export_infobar_nonce" value="<?php echo esc_attr( $export_infobar_nonce ); ?>" />
+																			<input type="hidden" id="cp-export_infobar_nonce" value="<?php echo $export_infobar_nonce; ?>" />
 
 																				<input type="hidden" name="style_id" value="<?php echo rawurlencode( $style_id ); ?>" />
 																				<input type="hidden" name="style_name" value="<?php echo rawurlencode( $style_name ); ?>" />
@@ -482,11 +486,11 @@ $cp_analytics_info_bar  = add_query_arg(
 																					echo wp_kses_post( apply_filters( 'cp_before_delete_action', $style_settings, 'info_bar' ) );
 																				}
 																				?>
-																				<a class="action-list cp-download-infobar" href="#" target="_top" style="margin-left: 25px;" ><i  class="connects-icon-download"></i><span class="action-tooltip"><?php esc_attr_e( 'Export Settings', 'smile' ); ?></span></a>
+																				<a class="action-list cp-download-infobar" href="#" target="_top" style="margin-left: 25px;" ><i  class="connects-icon-download"></i><span class="action-tooltip"><?php  echo 'Export Settings'; ?></span></a>
 																			</form>
 																			<a class="action-list trash-style-icon" data-delete="hard" data-variantoption="info_bar_variant_tests" data-style="<?php echo rawurlencode( $style_id ); ?>" data-option="smile_info_bar_styles" style="margin-left: 25px;" href="#"><i class="connects-icon-trash"></i><span class="action-tooltip">
 
-																				<?php esc_attr_e( 'Delete Info Bar', 'smile' ); ?>
+																				<?php  echo 'Delete Info Bar'; ?>
 																			</span></a>
 																		</td>
 																	</tr>
@@ -507,16 +511,16 @@ $cp_analytics_info_bar  = add_query_arg(
 																		)
 																	);
 																	?>
-																	<th scope="col" colspan="4" class="manage-column cp-list-empty"><?php esc_attr_e( 'No results available.', 'smile' ); ?><a class="add-new-h2" href="<?php echo esc_attr( $info_bar_url ); ?>" title="<?php esc_attr_e( 'Back to info_bar list', 'smile' ); ?>">
-																		<?php esc_attr_e( 'Back to Info Bar list', 'smile' ); ?>
+																	<th scope="col" colspan="4" class="manage-column cp-list-empty"><?php  echo 'No results available.'; ?><a class="add-new-h2" href="<?php echo $info_bar_url; ?>" title="<?php  echo 'Back to info_bar list'; ?>">
+																		<?php  echo 'Back to Info Bar list'; ?>
 																		</a>
 																	</th>
 																	<?php
 																} else {
 																	if ( 0 === $total ) {
 																		?>
-																		<th scope="col" colspan="4" class="manage-column cp-list-empty cp-empty-graphic"><?php esc_attr_e( 'First time being here?', 'smile' ); ?><br> <a class="add-new-h2" href="<?php echo esc_attr( esc_url( $cp_create_new_info_bar ) ); ?>" title="<?php esc_attr_e( 'Create New Info Bar', 'smile' ); ?>">
-																			<?php esc_attr_e( "Awesome! Let's start with your first info bar", 'smile' ); ?>
+																		<th scope="col" colspan="4" class="manage-column cp-list-empty cp-empty-graphic"><?php  echo 'First time being here?'; ?><br> <a class="add-new-h2" href="<?php echo $cp_create_new_info_bar; ?>" title="<?php  echo 'Create New Info Bar'; ?>">
+																			<?php  echo "Awesome! Let's start with your first info bar"; ?>
 																		</a>
 																	</th>
 																		<?php
@@ -536,7 +540,7 @@ $cp_analytics_info_bar  = add_query_arg(
 													<div class="col-md-5 col-sm-10">
 														<?php if ( 0 !== $total ) { ?>
 														<a class="button-primary action-tooltip disabled cp-delete-multiple-modal-style" href="#" title="" data-delete="hard" data-module='Info Bar' data-option="smile_info_bar_styles" data-id = "" data-variantoption = "info_bar_variant_tests" >
-															<?php esc_attr_e( 'Delete Selected Infobar', 'smile' ); ?>
+															<?php  echo 'Delete Selected Infobar'; ?>
 														</a>
 														<?php } ?>
 													</div><!-- .col-sm-6 -->
@@ -567,8 +571,8 @@ $cp_analytics_info_bar  = add_query_arg(
 												<?php if ( $total > $limit ) { ?>
 												<p class="search-box">
 													<form method="post" class="bsf-cntlst-search">
-														<label class="screen-reader-text" for="post-search-input"><?php esc_attr_e( 'Search Contacts', 'smile' ); ?>:</label>
-														<input type="search" id="post-search-input" name="sq" value="<?php echo esc_attr( $sq ); ?>">
+														<label class="screen-reader-text" for="post-search-input"><?php  echo 'Search Contacts'; ?>:</label>
+														<input type="search" id="post-search-input" name="sq" value="<?php echo $sq; ?>">
 														<input type="submit" id="search-submit" class="button" value="Search">
 													</form>
 												</p>
@@ -595,9 +599,9 @@ $cp_analytics_info_bar  = add_query_arg(
 								$timezone = 'WordPress';
 							}
 
-							$date = current_time( 'm/d/Y h:i A' );
-							echo ' <input type="hidden" id="cp_timezone_name" class="form-control cp_timezone" value="' . esc_attr( $timezone ) . '" />';
-							echo ' <input type="hidden" id="cp_currenttime" class="form-control cp_currenttime" value="' . esc_attr( $date ) . '" />';
+							$date = date( 'm/d/Y h:i A' );
+							echo ' <input type="hidden" id="cp_timezone_name" class="form-control cp_timezone" value="' . $timezone . '" />';
+							echo ' <input type="hidden" id="cp_currenttime" class="form-control cp_currenttime" value="' . $date . '" />';
 
 							?>
 							<!-- scheduler popup -->
@@ -607,7 +611,7 @@ $cp_analytics_info_bar  = add_query_arg(
 									<div class="cp-row">
 										<div class="schedular-title">
 											<h3>
-												<?php esc_attr_e( 'Schedule This Info Bar', 'smile' ); ?>
+												<?php  echo 'Schedule This Info Bar'; ?>
 											</h3>
 										</div>
 									</div>
@@ -617,7 +621,7 @@ $cp_analytics_info_bar  = add_query_arg(
 											<div class="container cp-start-time">
 												<div class="col-md-6">
 													<h3>
-														<?php esc_attr_e( 'Enter Starting Time', 'smile' ); ?>
+														<?php  echo 'Enter Starting Time'; ?>
 													</h3>
 												</div>
 												<div class="col-md-6">
@@ -631,7 +635,7 @@ $cp_analytics_info_bar  = add_query_arg(
 												<div class="container cp-end-time">
 													<div class="col-md-6">
 														<h3>
-															<?php esc_attr_e( 'Enter Ending Time', 'smile' ); ?>
+															<?php  echo 'Enter Ending Time'; ?>
 														</h3>
 													</div>
 													<div class="col-md-6">
@@ -652,10 +656,10 @@ $cp_analytics_info_bar  = add_query_arg(
 												<div class="cp-actions">
 													<div class="cp-action-buttons">
 														<button class="button button-primary cp-schedule-btn">
-															<?php esc_attr_e( 'Schedule Info Bar', 'smile' ); ?>
+															<?php  echo 'Schedule Info Bar'; ?>
 														</button>
 														<button class="button button-primary cp-schedule-cancel" onclick="jQuery(document).trigger('dismissPopup')">
-															<?php esc_attr_e( 'Cancel', 'smile' ); ?>
+															<?php  echo 'Cancel'; ?>
 														</button>
 													</div>
 												</div>
@@ -675,16 +679,20 @@ $cp_analytics_info_bar  = add_query_arg(
 									<div class="cp-import-info_bar">
 										<div class="cp-row">
 											<div class="cp-info_bar-heading">
-												<h3><?php esc_attr_e( 'Import Info Bar', 'smile' ); ?></h3>
+												<h3><?php  echo 'Import Info Bar'; ?></h3>
 											</div>
 										</div>
 										<div class="cp-row">
 											<div class="cp-import-input">
 												<input type="file" id="cp-import" />
-												<button class="button button-primary"><?php esc_attr_e( 'Import', 'smile' ); ?></button>
+												<button class="button button-primary"><?php  echo 'Import'; ?></button>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+							</div>
+							</div><!-- #content -->
+</div><!-- #main -->
+
 

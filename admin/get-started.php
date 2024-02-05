@@ -174,7 +174,7 @@ if ( true !== $reg_menu_hide ) {
 							<?php
 
 							$stored_modules = $helper_instance->convertica_get_option( 'convert_plug_modules' );
-							$get_started_url = Context::getContext()->link->getAdminLink('AdminConvDashboard');
+							$get_started_url = Context::getContext()->link->getAdminLink('AdminConvInfobar');
 							if ( 'Modal_Popup' === $stored_modules[0] ) {
 								$get_started_url .= '&page=smile-modal-designer&style-view=new';
 							} elseif ( 'Slide_In_Popup' === $stored_modules[0] ) {

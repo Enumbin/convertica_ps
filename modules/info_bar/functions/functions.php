@@ -614,7 +614,7 @@ if ( ! function_exists( 'cp_ib_global_before_init' ) ) {
 						<?php
 	}
 }
-				add_filter( 'cp_ib_global_before', 'cp_ib_global_before_init' );
+// add_filter( 'cp_ib_global_before', 'cp_ib_global_before_init' );
 
 if ( ! function_exists( 'cp_ib_global_after_init' ) ) {
 	/**
@@ -793,4 +793,4 @@ if ( ! function_exists( 'cp_ib_global_after_init' ) ) {
 	}
 }
 
-add_filter( 'cp_ib_global_after', 'cp_ib_global_after_init' );
+// add_filter( 'cp_ib_global_after', 'cp_ib_global_after_init' );

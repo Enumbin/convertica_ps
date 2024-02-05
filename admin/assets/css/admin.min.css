@@ -57,3 +57,13 @@
     border-color: #0a4b78;
     color: #0a4b78;
   }
+
+  .about-wrap #convert_plug_settings p {
+    line-height: 1.5;
+    font-size: 16px;
+    margin: 1em 0;
+  }
+
+  .about-wrap label {
+    vertical-align: middle;
+  }

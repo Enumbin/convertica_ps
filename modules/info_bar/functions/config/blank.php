@@ -12,7 +12,7 @@ if ( function_exists( 'smile_framework_add_options' ) ) {
 		array(
 			'style_name'    => 'Blank',
 			'demo_url'      => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/blank/blank.html',
-			'demo_dir'      => plugin_dir_path( __FILE__ ) . '../../assets/demos/blank/blank.html',
+			'demo_dir'      => CP_BASE_DIR_IFB . 'functions/config/' . '../../assets/demos/blank/blank.html',
 			'img_url'       => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/blank/blank.png',
 			'customizer_js' => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/blank/customizer.js',
 			'category'      => 'All,Offers',

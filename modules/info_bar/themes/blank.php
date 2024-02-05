@@ -62,7 +62,8 @@ if ( ! function_exists( 'info_bar_theme_blank' ) ) {
 		$a = array_merge( $a, $atts );
 
 		// Before filter.
-		apply_filters_ref_array( 'cp_ib_global_before', array( $a ) );
+		cp_ib_global_before_init(array( $a ));
+		// apply_filters_ref_array( 'cp_ib_global_before', array( $a ) );
 		?>
 
 		<div class="cp-content-container">
@@ -77,7 +78,8 @@ if ( ! function_exists( 'info_bar_theme_blank' ) ) {
 		<?php
 
 		// After filter.
-		apply_filters_ref_array( 'cp_ib_global_after', array( $a ) );
+		cp_ib_global_after_init(array( $a ));
+		// apply_filters_ref_array( 'cp_ib_global_after', array( $a ) );
 
 		return ob_get_clean();
 	}

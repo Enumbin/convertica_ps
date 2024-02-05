@@ -11,6 +11,7 @@ if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && ! wp_verify_nonce( $_REQUEST['
 	wp_die( 'No direct script access allowed!' );
 }
 
+
 $view = isset( $_GET['view'] ) ? $_GET['view']: '';
 switch ( $view ) {
 	case 'modules':

@@ -146,6 +146,7 @@ class Convertica extends Module
         return parent::install() &&
             $this->registerHook('header') &&
             $this->registerHook('displayBackOfficeHeader');
+            $this->registerHook('displayFooter');
     }
 
     public function create_default_campaign() {
@@ -354,5 +355,11 @@ class Convertica extends Module
     {
         $this->context->controller->addJS($this->_path.'/views/js/front.js');
         $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+
+        $this->helper_instance->do_action('wp_enqueue_scripts');
+    }
+
+    private function displayFooter(){
+        $this->helper_instance->do_action('wp_footer');
     }
 }

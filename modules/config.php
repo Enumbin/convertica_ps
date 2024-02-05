@@ -16,27 +16,28 @@ if ( function_exists( 'convert_plug_add_module' ) ) {
 	$modules =
 		array(
 
-			'Modal Popup'    => array(
-				'file' => 'modal/class-smile-modals.php',
-				'img'  => CP_PLUGIN_URL . 'modules/modal/assets/img/modal.jpg',
-				'desc' => 'Create beautiful and interactive modal to capture your visitors attention.',
-			),
+			// 'Modal Popup'    => array(
+			// 	'file' => 'modal/class-smile-modals.php',
+			// 	'img'  => CP_PLUGIN_URL . 'modules/modal/assets/img/modal.jpg',
+			// 	'desc' => 'Create beautiful and interactive modal to capture your visitors attention.',
+			// ),
 			'Info Bar'       => array(
 				'file' => 'info_bar/class-smile-info-bars.php',
 				'img'  => CP_PLUGIN_URL . 'modules/info_bar/assets/img/info_bar.jpg',
 				'desc' => 'Create beautiful and interactive info bar to capture your visitors attention.',
 			),
-			'Slide In Popup' => array(
-				'file' => 'slide_in/class-smile-slide-ins.php',
-				'img'  => CP_PLUGIN_URL . 'modules/slide_in/assets/img/slide_in.jpg',
-				'desc' => 'Create beautiful and interactive slide in pop-up to capture your visitors attention.',
-			),
+			// 'Slide In Popup' => array(
+			// 	'file' => 'slide_in/class-smile-slide-ins.php',
+			// 	'img'  => CP_PLUGIN_URL . 'modules/slide_in/assets/img/slide_in.jpg',
+			// 	'desc' => 'Create beautiful and interactive slide in pop-up to capture your visitors attention.',
+			// ),
 
 		);
 
 	convert_plug_add_module( $modules );
 
 	$stored_modules = $helper_instance->convertica_get_option( 'convert_plug_modules' );
+	$stored_modules = json_decode($stored_modules, true);
 
 	if ( empty( $stored_modules ) || '' === $stored_modules ) {
 		$new_module_list = array();
@@ -48,6 +49,7 @@ if ( function_exists( 'convert_plug_add_module' ) ) {
 	}
 
 	$stored_modules = $helper_instance->convertica_get_option( 'convert_plug_modules' );
+	$stored_modules = json_decode($stored_modules, true);
 
 	foreach ( $modules as $module => $options ) {
 		$file   = $options['file'];

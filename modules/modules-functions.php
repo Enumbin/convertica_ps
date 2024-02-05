@@ -18,6 +18,7 @@ if ( ! function_exists( 'cp_get_form_hidden_fields' ) ) {
 	 * @return mixed    content.
 	 */
 	function cp_get_form_hidden_fields( $a ) {
+		$helper_instance = Helper_Global::get_instance();
 		$mailer            = explode( ':', $a['mailer'] );
 		$on_success_action = '';
 		$on_success        = '';
@@ -63,7 +64,8 @@ if ( ! function_exists( 'cp_get_form_hidden_fields' ) ) {
 
 		$user_role = isset( $a['cp_new_user_role'] ) ? $a['cp_new_user_role'] : 'None';
 
-		$data          = get_option( 'convert_plug_settings' );
+		$data          = $helper_instance->convertica_get_option( 'convert_plug_settings' );
+		$data = json_decode($data, true);
 		$is_enable_pot = isset( $data['cp-disable-pot'] ) ? $data['cp-disable-pot'] : '1';
 		?>
 		<input type="hidden" id="<?php echo esc_attr( wp_rand() ); ?>_wpnonce" name="_wpnonce" value="<?php echo esc_attr( $nonce ); ?>">
@@ -735,7 +737,8 @@ if ( ! function_exists( 'cp_notify_error_to_admin' ) ) {
 	 */
 	function cp_notify_error_to_admin( $page_url ) {
 
-		$data               = get_option( 'convert_plug_settings' );
+		$data          = $helper_instance->convertica_get_option( 'convert_plug_settings' );
+		$data = json_decode($data, true);
 		$cp_change_ntf_id   = isset( $data['cp_change_ntf_id'] ) ? $data['cp_change_ntf_id'] : 1;
 		$cp_notify_email_to = isset( $data['cp_notify_email_to'] ) ? $data['cp_notify_email_to'] : get_option( 'admin_email' );
 
@@ -915,15 +918,15 @@ if ( ! function_exists( 'cp_is_connected' ) ) {
 	function cp_is_connected() {
 
 		$is_conn  = false;
-		$response = wp_remote_get( 'http://downloads.brainstormforce.com' );
+		// $response = wp_remote_get( 'http://downloads.brainstormforce.com' );
 
-		$response_code = wp_remote_retrieve_response_code( $response );
+		// $response_code = wp_remote_retrieve_response_code( $response );
 
-		if ( 200 === $response_code ) {
-			$is_conn = true; // action when connected.
-		} else {
-			$is_conn = false; // action in connection failure.
-		}
+		// if ( 200 === $response_code ) {
+		// 	$is_conn = true; // action when connected.
+		// } else {
+		// 	$is_conn = false; // action in connection failure.
+		// }
 
 		return $is_conn;
 	}
@@ -942,7 +945,8 @@ if ( ! function_exists( 'cp_get_edit_link' ) ) {
 
 		$url = '';
 
-		$data  = get_option( 'convert_plug_settings' );
+		$data          = $helper_instance->convertica_get_option( 'convert_plug_settings' );
+		$data = json_decode($data, true);
 		$esval = isset( $data['cp-edit-style-link'] ) ? $data['cp-edit-style-link'] : 0;
 
 		if ( $esval ) {
@@ -1198,6 +1202,7 @@ if ( ! function_exists( 'cp_enqueue_google_fonts' ) ) {
 	 */
 	function cp_enqueue_google_fonts( $fonts = '' ) {
 
+		$helper_instance = Helper_Global::get_instance();
 		$pairs  = '';
 		$gfonts = '';
 		$ar     = '';
@@ -1254,13 +1259,14 @@ if ( ! function_exists( 'cp_enqueue_google_fonts' ) ) {
 		}
 
 		// Check the google fonts is enabled from BackEnd.
-		$data         = get_option( 'convert_plug_settings' );
+		$data          = $helper_instance->convertica_get_option( 'convert_plug_settings' );
+		$data = json_decode($data, true);
 		$is_gf_enable = isset( $data['cp-google-fonts'] ) ? $data['cp-google-fonts'] : 1;
 
 		// Register & Enqueue selected - Google Fonts.
 		if ( ! empty( $gfonts ) && $is_gf_enable ) {
 			$media = '"all"';
-			echo "<link rel='stylesheet' type='text/css' id='cp-google-fonts' href='https://fonts.googleapis.com/css?family=" . esc_attr( esc_url( $gfonts ) ) . "' media='none' onload = 'if(media!=" . esc_attr( $media ) . ')media=' . esc_attr( $media ) . "'>"; //phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
+			echo "<link rel='stylesheet' type='text/css' id='cp-google-fonts' href='https://fonts.googleapis.com/css?family=" . $gfonts . "' media='none' onload = 'if(media!=" . $media  . ')media=' . $media  . "'>"; //phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 
 		}
 	}

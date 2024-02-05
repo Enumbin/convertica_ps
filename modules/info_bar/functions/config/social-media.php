@@ -12,7 +12,7 @@ if ( function_exists( 'smile_framework_add_options' ) ) {
 		array(
 			'style_name'    => 'Social Info Bar',
 			'demo_url'      => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/social_info_bar/social_info_bar.html',
-			'demo_dir'      => plugin_dir_path( __FILE__ ) . '../../assets/demos/social_info_bar/social_info_bar.html',
+			'demo_dir'      => CP_BASE_DIR_IFB . 'functions/config/' . '../../assets/demos/social_info_bar/social_info_bar.html',
 			'img_url'       => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/social_info_bar/social_info_bar.png',
 			'customizer_js' => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/social_info_bar/customizer.js',
 			'category'      => 'All,Social',

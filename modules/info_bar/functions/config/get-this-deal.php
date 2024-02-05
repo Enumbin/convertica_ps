@@ -12,7 +12,7 @@ if ( function_exists( 'smile_framework_add_options' ) ) {
 		array(
 			'style_name'    => 'Get This Deal',
 			'demo_url'      => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/get_this_deal/get_this_deal.html',
-			'demo_dir'      => plugin_dir_path( __FILE__ ) . '../../assets/demos/get_this_deal/get_this_deal.html',
+			'demo_dir'      => CP_BASE_DIR_IFB . 'functions/config/' . '../../assets/demos/get_this_deal/get_this_deal.html',
 			'img_url'       => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/get_this_deal/get_this_deal.png',
 			'customizer_js' => CP_PLUGIN_URL . 'modules/info_bar/assets/demos/get_this_deal/customizer.js',
 			'category'      => 'All,Offers',

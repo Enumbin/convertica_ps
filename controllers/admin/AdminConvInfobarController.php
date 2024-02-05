@@ -37,6 +37,7 @@ class AdminConvInfobarController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
 
+        $this->helper_instance->do_action('admin_head');
         $this->addJqueryUI('ui.progressbar');
         $this->addJS(_MODULE_DIR_ . $this->module->name . '/views/js/bubble-popup.js');
 

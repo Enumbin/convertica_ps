@@ -5,21 +5,23 @@
  * @package Convert_Plus.
  */
 
-$dir     = plugin_dir_path( __FILE__ );
+// $dir     = plugin_dir_path( __FILE__ );
+$helper_instance = Helper_Global::get_instance();
+$dir     = CP_BASE_DIR_IFB . 'functions/';
 $configs = glob( $dir . 'config/*.php' );
 foreach ( $configs as $settings ) {
 	require_once $settings;
 }
 
-if ( is_admin() ) {
+if ( $helper_instance->is_admin() ) {
 	require_once 'functions.common.php';
-	add_action( 'admin_enqueue_scripts', 'cp_enqueue_ultimate_google_fonts' );
+	$helper_instance->add_action( 'admin_enqueue_scripts', 'cp_enqueue_ultimate_google_fonts' );
 	if ( ! function_exists( 'cp_enqueue_ultimate_google_fonts' ) ) {
 		/**
 		 * Function Name: cp_enqueue_ultimate_google_fonts.
 		 */
 		function cp_enqueue_ultimate_google_fonts() {
-			$selected_fonts = get_option( 'cplus_ultimate_selected_google_fonts' );
+			$selected_fonts = $helper_instance->convertica_get_option( 'cplus_ultimate_selected_google_fonts' );
 			if ( ! empty( $selected_fonts ) ) {
 				$count     = count( $selected_fonts );
 				$font_call = '';
@@ -35,7 +37,7 @@ if ( is_admin() ) {
 							$font_call     .= ':';
 							foreach ( $variants as $vkey => $variant ) {
 								$variant_selected = $variant['variant_selected'];
-								if ( 'true' === $variant_selected || is_admin() ) {
+								if ( 'true' === $variant_selected || $helper_instance->is_admin() ) {
 									$font_call .= $variant['variant_value'];
 									if ( ( $variants_count - 1 ) !== $vkey && 0 < $variants_count ) {
 										$font_call .= ',';
