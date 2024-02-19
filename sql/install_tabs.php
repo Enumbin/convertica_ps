@@ -69,13 +69,11 @@ $tabs = [
         'name' => 'Slide In',
         'icon' => 'brush',
     ],
-    // [
-    //     'class_name' => 'AdminCrazyExtendedmodules',
-    //     'id_parent' => $id_parent,
-    //     'module' => 'crazyelements',
-    //     'name' => 'Extend Third Party Modules',
-    //     'active' => 1,
-    // ],
+    [
+        'class_name' => 'AdminConvAjax',
+        'id_parent' => -1,
+        'name' => 'Convertica Ajax',
+    ],
     // [
     //     'class_name' => 'AdminCrazyFrontendEditor',
     //     'id_parent' => $id_parent,

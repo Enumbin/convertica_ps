@@ -835,7 +835,6 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 			wp_enqueue_style( 'thickbox' );
 
 			$data = $this->helper->get_option( 'convert_plug_debug' );
-
 			// developer mode.
 			if ( '1' === self::$cp_dev_mode ) {
 				// accordion.
@@ -853,7 +852,7 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 				wp_enqueue_script( 'convert-plus-swal-js', CP_PLUGIN_URL . 'admin/assets/js/sweetalert.min.js', array(), CP_VERSION, true );
 			} else {
 				wp_enqueue_script( 'convert-plus-frosty-script', CP_PLUGIN_URL . 'admin/assets/js/frosty.js', array( 'jquery' ), CP_VERSION, true );
-				wp_enqueue_script( 'convert-plus-admin', CP_PLUGIN_URL . 'admin/assets/js/admin.min.js', array(), CP_VERSION, true );
+				wp_enqueue_script( 'convert-plus-admin', CP_PLUGIN_URL . 'admin/assets/js/admin.js', array(), CP_VERSION, true );
 			}
 			$nonce_object = array(
 				'framework_update_preview_data_nonce' => wp_create_nonce( 'cp_framework_update_preview_data_nonce' ),

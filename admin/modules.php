@@ -111,7 +111,9 @@ if ( true !== $reg_menu_hide ) {
 
 					?>
 					<form id="convert_plug_modules" class="cp-modules-list">
-						<input type="hidden" name="action" value="smile_update_modules" />
+						<input type="hidden" name="action" value="SmileUpdateModules" />
+						<input type="hidden" name="controller" value="AdminConvAjax" />
+						<input type="hidden" name="ajax" value="true" />
 						<?php
 						$output = '';
 						foreach ( $modules as $module => $opts ) {

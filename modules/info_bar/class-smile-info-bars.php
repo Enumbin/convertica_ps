@@ -129,7 +129,7 @@ if ( ! class_exists( 'Convert_Plug_Smile_Info_Bars' ) ) {
 		 */
 		public function info_bar_dashboard() {
 			// if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
-			if ( isset( $_REQUEST['token'] ) && $_REQUEST['controller'] = 'AdminConvInfobar') {
+			if ( isset( $_REQUEST['token'] ) && $_REQUEST['controller'] == 'AdminConvInfobar') {
 				$page           = isset( $_GET['style-view'] ) ? $_GET['style-view'] : 'main';
 				$analytics_data = $this->helper->convertica_get_option( 'smile_style_analytics' );
 				$variant_tests  = $this->helper->convertica_get_option( 'info_bar_variant_tests' );

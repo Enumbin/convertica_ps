@@ -61,7 +61,6 @@ class AdminConvInfobarController extends ModuleAdminController
     public function initContent(){
 
         parent::initContent();
-
         $this->helper_instance->do_action('admin_menu');
     }
 }

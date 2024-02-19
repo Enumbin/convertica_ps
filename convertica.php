@@ -48,16 +48,16 @@ class Convertica extends Module
 
         parent::__construct();
 
+        $this->displayName = $this->l('Convertica PrestaShop');
+        $this->description = $this->l('Convertica PrestaShop');
+
+        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+
         $this->define_constants();
         $this->include_mandatories();
 
         $this->helper_instance = Helper_Global::get_instance();
         $this->helper_instance->include_core_files();
-
-        $this->displayName = $this->l('Convertica PrestaShop');
-        $this->description = $this->l('Convertica PrestaShop');
-
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
     }
 
     public function define_constants(){
@@ -344,6 +344,9 @@ class Convertica extends Module
     {
         $this->context->controller->addJS($this->_path.'views/js/back.js');
         $this->context->controller->addCSS($this->_path.'views/css/back.css');
+        Media::addJsDef([
+            'ajaxurl' => $this->context->link->getAdminLink('AdminConvAjax'),
+        ]);
         $this->helper_instance->do_action('admin_print_scripts');
         $this->helper_instance->do_action('admin_enqueue_scripts');
     }

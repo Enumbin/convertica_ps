@@ -234,7 +234,7 @@ jQuery(document).ready(function () {
 			}
 		});
 	});
-
+	console.log("hello There");
 	// Modules.
 	const form_module = jQuery('#convert_plug_modules');
 	const btn_update = jQuery('.button-update-modules');
