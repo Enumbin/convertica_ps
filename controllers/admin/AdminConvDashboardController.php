@@ -17,6 +17,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+
+//  require_once(dirname(__FILE__) . '/../../classes/class-convert-plug.php');
+
 class AdminConvDashboardController extends ModuleAdminController
 {
     /**
@@ -24,6 +27,7 @@ class AdminConvDashboardController extends ModuleAdminController
      */
     public $module;
     public $helper_instance;
+    public $convert_plug;
 
     public function __construct()
     {
@@ -31,6 +35,8 @@ class AdminConvDashboardController extends ModuleAdminController
         parent::__construct();
 
         $this->helper_instance = Helper_Global::get_instance();
+        $this->convert_plug = new Convert_Plug();
+
     }
 
     public function setMedia($isNewTheme = false)
@@ -45,6 +51,11 @@ class AdminConvDashboardController extends ModuleAdminController
         } else {
             $this->addJs(_MODULE_DIR_ . $this->module->name . '/views/js/gamification.js');
         }
+        // echo 'hello1';
+        // echo __FILE__ . ' : ' . __LINE__;
+        $controller = Context::getContext()->controller->controller_name;
+        $this->helper_instance->do_action('admin_print_scripts-' . $controller);
+        // die(__FILE__ . ' : ' . __LINE__);
 
         $this->addCSS(CP_PLUGIN_URL . 'admin/assets/css/wp.css');
         $this->addJs(_MODULE_DIR_ . $this->module->name . '/views/js/jquery.isotope.js');

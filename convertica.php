@@ -342,12 +342,14 @@ class Convertica extends Module
     */
     public function hookDisplayBackOfficeHeader()
     {
+        $controller = Context::getContext()->controller->controller_name;
         $this->context->controller->addJS($this->_path.'views/js/back.js');
         $this->context->controller->addCSS($this->_path.'views/css/back.css');
         Media::addJsDef([
             'ajaxurl' => $this->context->link->getAdminLink('AdminConvAjax'),
         ]);
         $this->helper_instance->do_action('admin_print_scripts');
+        // $this->helper_instance->do_action('admin_print_scripts-' . $controller);
         $this->helper_instance->do_action('admin_enqueue_scripts');
     }
 

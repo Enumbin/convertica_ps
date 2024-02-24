@@ -54,13 +54,12 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 			// add_action( 'wp_loaded', array( $this, 'cp_access_capabilities' ), 1 );
 			// add_action( 'wp_loaded', array( $this, 'cp_set_options' ), 1 );
 			$this->cp_set_options();
-
+			$hook = Context::getContext()->controller->controller_name;
 			$this->helper = Helper_Global::get_instance();
 
 			$this->paths = $this->helper->wp_upload_dir();
 			$this->paths['fonts']  = 'smile_fonts';
 			$this->paths['fonturl'] = $this->paths['baseurl'] . $this->paths['fonts'];
-
 			$this->helper->add_action( 'admin_menu', array( $this, 'add_admin_menu' ), 99 );
 			// add_action( 'admin_menu', array( $this, 'add_admin_menu_rename' ), 9999 );
 			// add_filter( 'custom_menu_order', array( $this, 'cp_submenu_order' ) );
@@ -68,6 +67,7 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 			// add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_scripts' ), 10 );
 			$this->helper->add_action( 'admin_print_scripts', array( $this, 'cp_admin_css' ) );
 			$this->helper->add_action( 'admin_enqueue_scripts', array( $this, 'cp_admin_scripts' ), 100 );
+			$this->helper->add_action( 'admin_print_scripts-' . $hook, array( $this, 'convert_admin_scripts' ) );
 			// add_filter( 'bsf_core_style_screens', array( $this, 'cp_add_core_styles' ) );
 			// add_action( 'admin_head', array( $this, 'cp_custom_css' ) );
 			// add_action( 'admin_init', array( $this, 'cp_redirect_on_activation' ), 1 );
@@ -536,6 +536,7 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 		public function add_admin_menu() {
 
 			$controller = Context::getContext()->controller->controller_name;
+			$page = $controller;
 			switch ( $controller ) {
 				case 'AdminConvInfobar':
 					// $this->admin_dashboard();
@@ -545,8 +546,6 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 					break;
 			}
 			
-
-			// add_action( 'admin_print_scripts-' . $page, array( $this, 'convert_admin_scripts' ) );
 			// add_action( 'admin_footer-' . $page, array( $this, 'cp_admin_footer' ) );
 
 			// if ( defined( 'BSF_MENU_POS' ) ) {
@@ -831,65 +830,75 @@ if ( ! class_exists( 'Convert_Plug' ) ) {
 		 * @since 1.0
 		 */
 		public function convert_admin_scripts() {
-			wp_enqueue_script( 'jQuery' );
-			wp_enqueue_style( 'thickbox' );
+			// wp_enqueue_script( 'jQuery' );
+			// wp_enqueue_style( 'thickbox' );
 
-			$data = $this->helper->get_option( 'convert_plug_debug' );
+			$data = $this->helper->convertica_get_option( 'convert_plug_debug' );
 			// developer mode.
 			if ( '1' === self::$cp_dev_mode ) {
 				// accordion.
-				wp_enqueue_script( 'convert-plus-accordion-widget', CP_PLUGIN_URL . 'admin/assets/js/jquery.widget.min.js', array(), CP_VERSION, false );
-				wp_enqueue_script( 'convert-plus-accordion', CP_PLUGIN_URL . 'admin/assets/js/accordion.js', array( 'jquery' ), CP_VERSION, false );
-				wp_enqueue_script( 'convert-plus-frosty-script', CP_PLUGIN_URL . 'admin/assets/js/frosty.js', array( 'jquery' ), CP_VERSION, true );
-				wp_enqueue_script( 'convert-plus-admin', CP_PLUGIN_URL . 'admin/assets/js/admin.js', array( 'convert-plus-frosty-script' ), CP_VERSION, true );
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'admin/assets/js/jquery.widget.min.js');
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'admin/assets/js/accordion.js');
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'admin/assets/js/frosty.js');
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'admin/assets/js/admin.js');
+				// wp_enqueue_script( 'convert-plus-accordion-widget', CP_PLUGIN_URL . 'admin/assets/js/jquery.widget.min.js', array(), CP_VERSION, false );
+				// wp_enqueue_script( 'convert-plus-accordion', CP_PLUGIN_URL . 'admin/assets/js/accordion.js', array( 'jquery' ), CP_VERSION, false );
+				// wp_enqueue_script( 'convert-plus-frosty-script', CP_PLUGIN_URL . 'admin/assets/js/frosty.js', array( 'jquery' ), CP_VERSION, true );
+				// wp_enqueue_script( 'convert-plus-admin', CP_PLUGIN_URL . 'admin/assets/js/admin.js', array( 'convert-plus-frosty-script' ), CP_VERSION, true );
 
 				// shuffle js scripts.
-				wp_enqueue_script( 'convert-plus-jquery-modernizer', CP_PLUGIN_URL . 'modules/assets/js/jquery.shuffle.modernizr.js', array(), CP_VERSION, true );
-				wp_enqueue_script( 'convert-plus-jquery-shuffle', CP_PLUGIN_URL . 'modules/assets/js/jquery.shuffle.min.js', array(), CP_VERSION, true );
-				wp_enqueue_script( 'convert-plus-jquery-shuffle-custom', CP_PLUGIN_URL . 'modules/assets/js/shuffle-script.js', array(), CP_VERSION, true );
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'modules/assets/js/jquery.shuffle.modernizr.js');
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'modules/assets/js/jquery.shuffle.min.js');
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'modules/assets/js/shuffle-script.js');
+				// wp_enqueue_script( 'convert-plus-jquery-modernizer', CP_PLUGIN_URL . 'modules/assets/js/jquery.shuffle.modernizr.js', array(), CP_VERSION, true );
+				// wp_enqueue_script( 'convert-plus-jquery-shuffle', CP_PLUGIN_URL . 'modules/assets/js/jquery.shuffle.min.js', array(), CP_VERSION, true );
+				// wp_enqueue_script( 'convert-plus-jquery-shuffle-custom', CP_PLUGIN_URL . 'modules/assets/js/shuffle-script.js', array(), CP_VERSION, true );
 
 				// sweet alert.
-				wp_enqueue_script( 'convert-plus-swal-js', CP_PLUGIN_URL . 'admin/assets/js/sweetalert.min.js', array(), CP_VERSION, true );
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'admin/assets/js/sweetalert.min.js');
+				// wp_enqueue_script( 'convert-plus-swal-js', CP_PLUGIN_URL . 'admin/assets/js/sweetalert.min.js', array(), CP_VERSION, true );
 			} else {
-				wp_enqueue_script( 'convert-plus-frosty-script', CP_PLUGIN_URL . 'admin/assets/js/frosty.js', array( 'jquery' ), CP_VERSION, true );
-				wp_enqueue_script( 'convert-plus-admin', CP_PLUGIN_URL . 'admin/assets/js/admin.js', array(), CP_VERSION, true );
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'admin/assets/js/frosty.js');
+				Context::getContext()->controller->addJS(CP_PLUGIN_URL . 'admin/assets/js/admin.js');
+				// wp_enqueue_script( 'convert-plus-frosty-script', CP_PLUGIN_URL . 'admin/assets/js/frosty.js', array( 'jquery' ), CP_VERSION, true );
+				// wp_enqueue_script( 'convert-plus-admin', CP_PLUGIN_URL . 'admin/assets/js/admin.js', array(), CP_VERSION, true );
 			}
-			$nonce_object = array(
-				'framework_update_preview_data_nonce' => wp_create_nonce( 'cp_framework_update_preview_data_nonce' ),
-				'duplicate_nonce'                     => wp_create_nonce( 'cp_duplicate_nonce' ),
-				'presets_nonce'                       => wp_create_nonce( 'cp_presets_nonce' ),
-				'cp_import_nonce'                     => wp_create_nonce( 'cp_import_module_nonce' ),
-				'customizer_nonce'                    => wp_create_nonce( 'cp_customizer_nonce' ),
-				'cp_get_posts_by_query_nonce'         => wp_create_nonce( 'cp_get_posts_by_query_nonce' ),
-			);
+			// $nonce_object = array(
+			// 	'framework_update_preview_data_nonce' => wp_create_nonce( 'cp_framework_update_preview_data_nonce' ),
+			// 	'duplicate_nonce'                     => wp_create_nonce( 'cp_duplicate_nonce' ),
+			// 	'presets_nonce'                       => wp_create_nonce( 'cp_presets_nonce' ),
+			// 	'cp_import_nonce'                     => wp_create_nonce( 'cp_import_module_nonce' ),
+			// 	'customizer_nonce'                    => wp_create_nonce( 'cp_customizer_nonce' ),
+			// 	'cp_get_posts_by_query_nonce'         => wp_create_nonce( 'cp_get_posts_by_query_nonce' ),
+			// );
 
-			wp_localize_script( 'convert-plus-admin', 'cplus_var_nonce', $nonce_object );
+			// wp_localize_script( 'convert-plus-admin', 'cplus_var_nonce', $nonce_object );
 
-			wp_localize_script(
-				'convert-plus-admin',
-				'cplus_vars',
-				array(
-					'delete_notice'      => esc_html__( 'You will not be able to recover this selected', 'smile' ),
-					'confirm_delete'     => esc_html__( 'Yes, delete it!', 'smile' ),
-					'cancel_delete'      => esc_html__( 'No, cancel it!', 'smile' ),
-					'delete_conf_notice' => esc_html__( 'Style you have selected has been deleted.', 'smile' ),
-					'duplicate_style'    => esc_html__( 'Duplicated', 'smile' ),
-				)
-			);
-			if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
-				if ( ( isset( $_GET['style-view'] ) && ( 'edit' === $_GET['style-view'] || 'variant' === $_GET['style-view'] ) ) || ! isset( $_GET['style-view'] ) ) {
-					wp_enqueue_script( 'convert-plus-select2', CP_PLUGIN_URL . 'admin/assets/select2/select2.min.js', array(), '2.4.0.1', false );
-				}
-			}
+			// wp_localize_script(
+			// 	'convert-plus-admin',
+			// 	'cplus_vars',
+			// 	array(
+			// 		'delete_notice'      => esc_html__( 'You will not be able to recover this selected', 'smile' ),
+			// 		'confirm_delete'     => esc_html__( 'Yes, delete it!', 'smile' ),
+			// 		'cancel_delete'      => esc_html__( 'No, cancel it!', 'smile' ),
+			// 		'delete_conf_notice' => esc_html__( 'Style you have selected has been deleted.', 'smile' ),
+			// 		'duplicate_style'    => esc_html__( 'Duplicated', 'smile' ),
+			// 	)
+			// );
+			// if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
+			// 	if ( ( isset( $_GET['style-view'] ) && ( 'edit' === $_GET['style-view'] || 'variant' === $_GET['style-view'] ) ) || ! isset( $_GET['style-view'] ) ) {
+			// 		wp_enqueue_script( 'convert-plus-select2', CP_PLUGIN_URL . 'admin/assets/select2/select2.min.js', array(), '2.4.0.1', false );
+			// 	}
+			// }
 
 			// REMOVE WP EMOJI.
-			remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+			// remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+			// remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
-			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
-			remove_action( 'admin_print_styles', 'print_emoji_styles' );
-			/*Conflict with Subway Theme.*/
-			remove_action( 'admin_print_scripts', 'qode_admin_jquery' );
+			// remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+			// remove_action( 'admin_print_styles', 'print_emoji_styles' );
+			// /*Conflict with Subway Theme.*/
+			// remove_action( 'admin_print_scripts', 'qode_admin_jquery' );
 		}
 
 		/**
