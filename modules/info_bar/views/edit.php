@@ -8,27 +8,33 @@
 if ( isset( $_REQUEST['cp_admin_page_nonce'] ) && ! wp_verify_nonce( $_REQUEST['cp_admin_page_nonce'], 'cp_admin_page' ) ) {
 	return;
 }
+$page = isset( $_GET['page'] ) ? ( $_GET['page'] ) : '';
+$info_bar_new_url = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], array(
+	'page'       => $page,
+	'style-view' => 'new',
+));
+// $info_bar_new_url = esc_url(
+// 	add_query_arg(
+// 		array(
+// 			'page'       => 'smile-info_bar-designer',
+// 			'style-view' => 'new',
+// 		),
+// 		admin_url( 'admin.php' )
+// 	)
+// );
+$info_bar_url = Context::getContext()->link->getAdminLink('AdminConvInfobar', true, [], array(
+	'page'       => $page,
+));
+// $info_bar_url = esc_url(
+// 	add_query_arg(
+// 		array(
+// 			'page' => 'smile-info_bar-designer',
+// 		),
+// 		admin_url( 'admin.php' )
+// 	)
+// );
 
-$info_bar_new_url = esc_url(
-	add_query_arg(
-		array(
-			'page'       => 'smile-info_bar-designer',
-			'style-view' => 'new',
-		),
-		admin_url( 'admin.php' )
-	)
-);
-
-$info_bar_url = esc_url(
-	add_query_arg(
-		array(
-			'page' => 'smile-info_bar-designer',
-		),
-		admin_url( 'admin.php' )
-	)
-);
-
-$style = esc_attr( $_GET['style'] );
+$style = $_GET['style'];
 if ( ! isset( $style ) && '' !== $style ) {
 	header( $info_bar_new_url );
 }
@@ -44,8 +50,8 @@ if ( ! isset( $style ) && '' !== $style ) {
 	</div>
 </div><!-- .edit-screen-overlay -->
 <div class="wrap">
-	<h2> <?php esc_attr_e( 'Edit Info Bar Style', 'smile' ); ?>
-		<a class="add-new-h2" href="<?php echo esc_attr( $info_bar_url ); ?>" title="<?php esc_attr_e( 'Go to main page', 'smile' ); ?>"><?php esc_attr_e( 'Back to Main Page', 'smile' ); ?></a>
+	<h2> <?php echo 'Edit Info Bar Style'; ?>
+		<a class="add-new-h2" href="<?php echo $info_bar_url; ?>" title="<?php echo 'Go to main page'; ?>"><?php echo 'Back to Main Page'; ?></a>
 	</h2>
 	<div class="message"></div>
 	<div class="smile-style-wrapper">

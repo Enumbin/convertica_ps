@@ -7,7 +7,7 @@
 
 ?>
 <div id="main">
-    <div id="content"  class=" ">
+    <div id="content"  class="bootstrap">
 		<div class="wrap smile-add-style bend">
 			<div class="wrap-container">
 				<div class="msg"></div>

@@ -544,11 +544,12 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 								<?php } ?>
 
 								<?php
-								$timezone_settings            = get_option( 'convert_plug_settings' );
+								$timezone_settings            = $helper_instance->convertica_get_option( 'convert_plug_settings' );
+								$timezone_settings            = json_decode($timezone_settings, true);
 								$timezone_name                = $timezone_settings['cp-timezone'];
-								$delete_style_nonce_for_admin = wp_create_nonce( 'cp-delete-style' );
+								$delete_style_nonce_for_admin = 'nonce_conv';
 								?>
-								<input type="hidden" name="cp_gmt_offset" class ="cp_gmt_offset" value="<?php echo ( get_option( 'gmt_offset' ) ); ?>" />
+								<input type="hidden" name="cp_gmt_offset" class ="cp_gmt_offset" value="<?php echo ( $helper_instance->convertica_get_option( 'gmt_offset' ) ); ?>" />
 								<input type="hidden" name="cp_counter_timezone" class ="cp_counter_timezone" value="<?php echo ( $timezone_name ); ?>" />
 								<input type="hidden" id="cp-delete-style-nonce" value="<?php echo ( $delete_style_nonce_for_admin ); ?>" />                      		<div class="customizer metro" id="accordion-panel-<?php echo ( $options[0] ); ?>">
 									<div class="cp-new-cust-section">
@@ -572,12 +573,13 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 												<?php
 												$dashboard_link = '';
 												if ( isset( $_GET['page'] ) ) {
-													$dashboard_link = add_query_arg(
-														array(
-															'page'  => ( $_GET['page'] ),
-														),
-														admin_url( 'admin.php' )
-													);
+													$dashboard_link = Context::getContext()->link->getAdminLink('AdminConvDashboard');
+													// $dashboard_link = add_query_arg(
+													// 	array(
+													// 		'page'  => ( $_GET['page'] ),
+													// 	),
+													// 	admin_url( 'admin.php' )
+													// );
 												}
 												?>
 												<a data-redirect="<?php echo ( ( $dashboard_link ) ); ?>" href="javascript:void(0)" target="_blank" class="cp-section cp-dashboard-link">
@@ -585,7 +587,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 														<i class="connects-icon-esc"></i>
 													</span>
 												</a>
-												<a data-redirect="<?php echo ( ( site_url() ) ); ?>" href="javascript:void(0)" target="_blank" class="cp-section cp-website-link" >
+												<a data-redirect="<?php echo Context::getContext()->shop->getBaseURL(true, true); ?>" href="javascript:void(0)" target="_blank" class="cp-section cp-website-link" >
 													<span class="cp-tooltip-icon has-tip" data-position="right" title="See Website">
 														<i class="connects-icon-globe"></i>
 													</span>
@@ -609,7 +611,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 													<span class="cp-tooltip-icon has-tip" data-position="top" title="
 													<?php
 													/* translators:%s module name*/
-													echo sprintf( __( 'Create New %s ', 'smile' ), ucwords( str_replace( '_', ' ', $module ) ) ); //PHPCS:ignore:WordPress.Security.EscapeOutput.OutputNotEscaped
+													echo sprintf( $helper_instance->__( 'Create New %s ', 'smile' ), ucwords( str_replace( '_', ' ', $module ) ) ); //PHPCS:ignore:WordPress.Security.EscapeOutput.OutputNotEscaped
 													?>
 													">
 													<i class="connects-icon-plus"></i>
@@ -667,9 +669,9 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 																		?>
 																	<div class="smile-element-container">
 																		<strong>
-																			<label for="cp_style_title"><?php esc_html_e( 'Name This Design', 'smile' ); ?></label>
+																			<label for="cp_style_title"><?php echo $helper_instance->esc_html__( 'Name This Design', 'smile' ); ?></label>
 																		</strong>
-																		<span class="cp-tooltip-icon has-tip" data-position="right" style="cursor: help;float: right;" title="<?php _e( 'A unique & descriptive name will help you in future as it would appear in the dashboard, analytics, etc.', 'smile' ); ?>">
+																		<span class="cp-tooltip-icon has-tip" data-position="right" style="cursor: help;float: right;" title="<?php echo 'A unique & descriptive name will help you in future as it would appear in the dashboard, analytics, etc.'; ?>">
 																			<i class="dashicons dashicons-editor-help"></i>
 																		</span>
 																		<p>
@@ -680,7 +682,6 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 																		<?php
 																	}
 																	?>
-
 																	<?php
 																	$html = '';
 																	foreach ( $panel as $key => $values ) {
@@ -753,7 +754,7 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 															<div class="row smile-style-search">
 																<div class="container">
 																	<div class="col-sm-12">
-																		<input type="search" class="js-shuffle-search" id="style-search" name="style-search" placeholder="<?php _e( 'Search Template', 'smile' ); ?>">
+																		<input type="search" class="js-shuffle-search" id="style-search" name="style-search" placeholder="<?php echo ( 'Search Template' ); ?>">
 																	</div>
 																</div>
 															</div>
@@ -765,7 +766,8 @@ if ( ! function_exists( 'smile_style_dashboard' ) ) {
 
 																	// check if this style is imported.
 																	if ( isset( $style_options[7] ) ) {
-																		$style_option_data = get_option( 'cp_' . $module . '_' . $style_options[7] );
+																		$style_option_data = $helper_instance->convertica_get_option( 'cp_' . $module . '_' . $style_options[7] );
+																		$style_option_data = json_decode($style_option_data, true);
 
 																		if ( ! $style_option_data || empty( $style_option_data ) ) {
 																			$display = false;

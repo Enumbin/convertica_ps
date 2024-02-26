@@ -17,14 +17,14 @@ if ( function_exists( 'smile_update_settings' ) ) {
 	$cp_settings               = $helper_instance->convertica_get_option( 'convert_plug_settings' );
 	$cp_settings               = json_decode($cp_settings, true);
 	$user_inactivity           = isset( $cp_settings['user_inactivity'] ) ? $cp_settings['user_inactivity'] : '60';
-	$style                     = isset( $_GET['style'] ) ? esc_attr( $_GET['style'] ) : '';
+	$style                     = isset( $_GET['style'] ) ? $_GET['style'] : '';
 
 	if ( isset( $_GET['variant-style'] ) ) {
-		$style_id_for_ifbcustomcss = esc_attr( $_GET['variant-style'] );
+		$style_id_for_ifbcustomcss = $_GET['variant-style'];
 		$style                     = $_GET['variant-style'];
 	} else {
 		if ( isset( $_GET['style'] ) ) {
-			$style_id_for_ifbcustomcss = esc_attr( $_GET['style'] );
+			$style_id_for_ifbcustomcss = $_GET['style'];
 		}
 	}
 

@@ -26,7 +26,7 @@ class Helper_Global{
 		$key  = pSQL( $key );
 		$value = pSQL( $value );
 		if ( $result === false ) {
-			Db::getInstance()->insert(
+			return Db::getInstance()->insert(
 				'convertica_options',
 				array(
 					'option_name'  => $key,
@@ -34,7 +34,7 @@ class Helper_Global{
 				)
 			);
 		} else {
-			Db::getInstance()->update( 'convertica_options', array( 'option_value' => $value ), "`option_name` = '$key'" );
+			return Db::getInstance()->update( 'convertica_options', array( 'option_value' => $value ), "`option_name` = '$key'" );
 		}
     }
 

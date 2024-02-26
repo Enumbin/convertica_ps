@@ -850,30 +850,32 @@ if ( ! function_exists( 'smile_update_modules' ) ) {
 	 */
 	function smile_update_modules() {
 
-		check_admin_referer( 'cp-smile_update_modules-nonce', 'security_nonce' );
+		$helper_ins = Helper_Global::get_instance();
+		// check_admin_referer( 'cp-smile_update_modules-nonce', 'security_nonce' );
 
-		if ( ! current_user_can( 'access_cp' ) ) {
-			die( -1 );
-		}
+		// if ( ! current_user_can( 'access_cp' ) ) {
+		// 	die( -1 );
+		// }
 
-		$module_list = array_map( 'sanitize_text_field', wp_unslash( $_POST ) );
+		// $module_list = array_map( 'sanitize_text_field', wp_unslash( $_POST ) );
+		$module_list = $_POST;
 		unset( $module_list['action'] );
 		$new_module_list = array();
 		foreach ( $module_list as $module => $file ) {
 			$new_module_list[] = $module;
 		}
 
-		$result = update_option( 'convert_plug_modules', $new_module_list );
+		$result = $helper_ins->convertica_update_option( 'convert_plug_modules', $new_module_list );
 		if ( $result ) {
-			wp_send_json(
+			echo json_encode(
 				array(
-					'message' => __( 'Modules Updated!', 'smile' ),
+					'message' => $helper_ins->__( 'Modules Updated!', 'smile' ),
 				)
 			);
 		} else {
-			wp_send_json(
+			echo json_encode(
 				array(
-					'message' => __( 'No settings were updated. Try again!', 'smile' ),
+					'message' => $helper_ins->__( 'No settings were updated. Try again!', 'smile' ),
 				)
 			);
 		}

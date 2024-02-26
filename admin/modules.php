@@ -108,7 +108,8 @@ if ( true !== $reg_menu_hide ) {
 					<?php
 					$modules        = Smile_Framework::$modules;
 					$stored_modules = $helper_instance->convertica_get_option( 'convert_plug_modules' );
-
+					$stored_modules = json_decode($stored_modules, true);
+					
 					?>
 					<form id="convert_plug_modules" class="cp-modules-list">
 						<input type="hidden" name="action" value="SmileUpdateModules" />

@@ -29,16 +29,17 @@
  * Maybe the merchant will just try to reset the module
  * but does not want to loose all of the data associated to the module.
  */
-// $idtabs = [];
-// $idtabs[] = Tab::getIdFromClassName("AdminConverticaMain");
-// $idtabs[] = Tab::getIdFromClassName("AdminConvDashboard");
-// $idtabs[] = Tab::getIdFromClassName("AdminConvModalpop");
-// $idtabs[] = Tab::getIdFromClassName("AdminConvInfobar");
-// $idtabs[] = Tab::getIdFromClassName("AdminConvSlidein");
+$idtabs = [];
+$idtabs[] = Tab::getIdFromClassName("AdminConverticaMain");
+$idtabs[] = Tab::getIdFromClassName("AdminConvDashboard");
+$idtabs[] = Tab::getIdFromClassName("AdminConvModalpop");
+$idtabs[] = Tab::getIdFromClassName("AdminConvInfobar");
+$idtabs[] = Tab::getIdFromClassName("AdminConvSlidein");
+$idtabs[] = Tab::getIdFromClassName("AdminConvAjax");
 
-// foreach ($idtabs as $tabid) {
-//     if ($tabid) {
-//         $tab = new Tab($tabid);
-//         $tab->delete();
-//     }
-// }
+foreach ($idtabs as $tabid) {
+    if ($tabid) {
+        $tab = new Tab($tabid);
+        $tab->delete();
+    }
+}

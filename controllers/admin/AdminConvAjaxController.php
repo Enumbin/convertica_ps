@@ -17,10 +17,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+require_once dirname( __FILE__ ) . '/../../helper_global.php';
+require_once dirname( __FILE__ ) . '/../../admin/ajax-actions.php';
 class AdminConvAjaxController extends ModuleAdminController
 {
-    public function ajaxProcessSmileUpdateModules()
-    {
-        die(__FILE__ . ' : ' . __LINE__);
+    public function ajaxProcessSmileUpdateModules() {
+        smile_update_modules();
+        die();
     }
 }
