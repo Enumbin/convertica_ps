@@ -55,12 +55,13 @@ if ( ! function_exists( 'cp_get_checkbox_js' ) ) {
 	 * @return mixed             mixed val.
 	 */
 	function cp_get_checkbox_js( $input_name ) {
+		$helper_instance = Helper_Global::get_instance();
 		ob_start();
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready( function() {
-				var checkbox = jQuery(".smile_<?php echo esc_attr( $input_name ); ?>");
-				var input = jQuery("#smile_<?php echo esc_attr( $input_name ); ?>");
+				var checkbox = jQuery(".smile_<?php echo $helper_instance->esc_attr( $input_name ); ?>");
+				var input = jQuery("#smile_<?php echo $helper_instance->esc_attr( $input_name ); ?>");
 				var val = '';
 				checkbox.on("change",function(){
 					val = "";

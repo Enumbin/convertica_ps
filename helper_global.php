@@ -276,3 +276,7 @@ class Helper_Global{
 		return self::$instance;
 	}
 }
+
+function helper_get_instance(){
+	return Helper_Global::get_instance();
+}
