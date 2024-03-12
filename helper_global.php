@@ -239,6 +239,15 @@ class Helper_Global{
 		}
 	}
 
+	public function wp_get_attachment_url($id_image){
+		$imageUrl = Context::getContext()->link->getImageLink(
+			'',
+			$id_image,
+			ImageType::getFormattedName('medium')
+		);
+		return $imageUrl;
+	}
+
 	public function __($text, $slug){
 		return Context::getContext()->getTranslator()->trans( $text, [], 'Modules.Convertica.Admin' );
 	}
@@ -253,6 +262,10 @@ class Helper_Global{
 
 	public function esc_url($url){
 		return $url;
+	}
+
+	public function esc_attr($attr){
+		return $attr;
 	}
 
 

@@ -30,13 +30,14 @@ function cp_gfonts_param_script() {
  */
 function google_fonts_settings_field( $name, $settings, $value ) {
 
+	$helper_instance = Helper_Global::get_instance();
 	if ( isset( $settings['use_in'] ) ) {
 		$use_in = $settings['use_in'];
 	} else {
 		$use_in = 'editor';
 	}
 
-	wp_enqueue_script( 'convert-plus_gfonts_param' );
+	// wp_enqueue_script( 'convert-plus_gfonts_param' );
 
 	$input_name = $name;
 	$output     = '';
@@ -45,7 +46,7 @@ function google_fonts_settings_field( $name, $settings, $value ) {
 
 	$type  = isset( $settings['type'] ) ? $settings['type'] : '';
 	$class = isset( $settings['class'] ) ? $settings['class'] : '';
-	$title = isset( $settings['title'] ) ? $settings['title'] : __( 'Font Name', 'smile' );
+	$title = isset( $settings['title'] ) ? $settings['title'] : $helper_instance->__( 'Font Name', 'smile' );
 
 	// Apply partials.
 	$partials = generate_partial_atts( $settings );
@@ -53,7 +54,7 @@ function google_fonts_settings_field( $name, $settings, $value ) {
 	$output .= '<strong><label class="customize-control-title">' . $title . '</label></strong>';
 
 	// Google Fonts.
-	$fonts       = get_option( 'cplus_ultimate_selected_google_fonts' );
+	$fonts       = $helper_instance->convertica_get_option( 'cplus_ultimate_selected_google_fonts' );
 	$fontsvals   = array();
 	$basic_fonts = array(
 		'Arial',
@@ -99,7 +100,7 @@ function google_fonts_settings_field( $name, $settings, $value ) {
 
 	$output .= '<div class="ultimate_google_font_param_block"><p>';
 	$output .= '	<select id="smile_' . $input_name . '" name="font_family" class="smile-input google-font-list" ' . $partials . '>';
-	$output .= '		<option value="">' . __( 'Default', 'smile' ) . '</option>';
+	$output .= '		<option value="">' . $helper_instance->__( 'Default', 'smile' ) . '</option>';
 
 	if ( ! empty( $fonts ) && is_array( $fonts ) ) {
 		foreach ( $fonts as $font ) {
